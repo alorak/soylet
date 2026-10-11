@@ -92,7 +92,8 @@ export function createPicker({ trigger, popover, control, onSelect, type = 'mode
       const status = document.createElement('span');
       status.className = 'picker-option-status';
       status.textContent = choice.status;
-      option.append(main, status);
+      option.append(main);
+      if (choice.status) option.append(status);
       option.addEventListener('click', () => {
         close(true);
         onSelect(choice);
