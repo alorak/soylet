@@ -19,13 +19,26 @@
     </header>
     <main class="container">
       <section id="home-page" class="page">
-        <div class="hero"><span class="eyebrow"><span class="status-light"></span> TÜRKÇE METİNDEN SESE</span><h1>Yaz, <em>söylet.</em></h1><p>Metnini yaz, sesini dinle veya kaydet. Sesin yalnızca senin tarayıcında oluşturulur.</p></div>
+        <div class="hero home-hero"><h1>Yaz, <em>söylet.</em></h1></div>
         <div class="editor-card">
-          <div class="editor-bar"><label for="text-input">SESLENDİRİLECEK METİN</label><span id="character-count">0 karakter</span></div>
-          <textarea id="text-input" maxlength="5000" rows="8" spellcheck="true" placeholder="Merhaba! Bugün anlatacak güzel bir hikâyem var. Hazır mısın?"></textarea>
+          <div class="editor-bar"><label for="text-input">SESLENDİRİLECEK METİN</label><div class="editor-meta"><span id="character-count">0 karakter</span><button id="clear-text" class="text-action" type="button">Temizle</button></div></div>
+          <textarea id="text-input" maxlength="5000" rows="6" spellcheck="true" placeholder="Merhaba! Bugün anlatacak güzel bir hikâyem var. Hazır mısın?"></textarea>
           <div class="editor-footer">
-            <span class="model-current"><span class="model-current-icon">♫</span><span id="active-model-label">Piper · Fettah</span><span class="separator">•</span><span id="active-voice-label">Türkçe</span></span>
-            <button id="clear-text" class="text-action" type="button">Metni temizle</button>
+            <div class="quick-controls" role="group" aria-label="Seslendirme seçenekleri">
+              <div class="quick-control quick-model">
+                <label for="quick-model-select">Model</label>
+                <select id="quick-model-select"><option value="" disabled selected>Modeller kontrol ediliyor…</option></select>
+              </div>
+              <button id="quick-model-setup" class="quick-model-setup" type="button" hidden>Model indir</button>
+              <div id="quick-voice-control" class="quick-control quick-voice" hidden>
+                <label for="quick-voice-select">Ses karakteri</label>
+                <select id="quick-voice-select"></select>
+              </div>
+              <div class="quick-control quick-speed">
+                <label for="quick-speed-select">Hız</label>
+                <select id="quick-speed-select" aria-label="Konuşma hızı"></select>
+              </div>
+            </div>
           </div>
         </div>
         <div class="actions">
