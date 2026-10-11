@@ -2,7 +2,7 @@ import './styles.css';
 import { DEFAULT_MODEL_ID, MODELS, VOICE_STYLES, getModel, installedModelIds, downloadModel, removeModel, storageSupported } from './models.js';
 import { synthesize, forgetEngine } from './tts.js';
 import { decodeAudio, makeWav, makeMp3, saveFile } from './audio.js';
-import { chooseAvailableModel, modelVoices } from './quick-controls.js';
+import { chooseAvailableModel, modelVoices, modelMenuChoices } from './quick-controls.js';
 import { createPicker, closePickers } from './pickers.js';
 
 const $ = id => document.getElementById(id);
@@ -112,14 +112,7 @@ function updateSpeedSlider() {
 function renderQuickControls() {
   const chosen = getModel(state.modelId);
   const downloaded = state.installed;
-  modelPicker.setChoices(MODELS.map(model => ({
-    id: model.id,
-    label: model.title,
-    installed: downloaded.has(model.id),
-    status: !downloaded.has(model.id)
-      ? 'Aktif edilmeli'
-      : state.modelId === model.id ? 'Seçili' : 'İndirildi'
-  })), state.modelId);
+  modelPicker.setChoices(modelMenuChoices(MODELS, downloaded, state.modelId), state.modelId);
   $('quick-model-value').textContent = chosen
     ? `${chosen.title}${downloaded.has(chosen.id) ? '' : ' · Aktif edilmeli'}`
     : 'Model seç';
