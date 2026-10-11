@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fafafd" />
+  <meta name="description" content="Türkçe metinleri tamamen tarayıcında seslendir; WAV veya MP3 olarak kaydet." />
+  <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+  <title>söylet — metnini seslendir</title>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <button class="brand" id="home-link" type="button" aria-label="söylet ana sayfa"><span class="brand-icon" aria-hidden="true">◖))</span><span>söylet<span class="brand-dot">.</span></span></button>
+      <button id="settings-link" class="settings-trigger" type="button" aria-expanded="false" aria-controls="settings-page">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a2 2 0 0 0 .4 2l-2.8 2.8a2 2 0 0 0-2-.4l-.7 1.8h-4.6L9 19.4a2 2 0 0 0-2 .4L4.2 17a2 2 0 0 0 .4-2L2.8 14v-4l1.8-1a2 2 0 0 0-.4-2L7 4.2a2 2 0 0 0 2 .4l.7-1.8h4.6l.7 1.8a2 2 0 0 0 2-.4L19.8 7a2 2 0 0 0-.4 2l1.8 1v4Z"/></svg>
+        Ayarlar
+      </button>
+    </header>
+    <main class="container">
+      <section id="home-page" class="page">
+        <div class="hero"><span class="eyebrow"><span class="status-light"></span> TÜRKÇE METİNDEN SESE</span><h1>Yaz, <em>söylet.</em></h1><p>Metnini yaz, sesini dinle veya kaydet. Sesin yalnızca senin tarayıcında oluşturulur.</p></div>
+        <div class="editor-card">
+          <div class="editor-bar"><label for="text-input">SESLENDİRİLECEK METİN</label><span id="character-count">0 karakter</span></div>
+          <textarea id="text-input" maxlength="5000" rows="8" spellcheck="true" placeholder="Merhaba! Bugün anlatacak güzel bir hikâyem var. Hazır mısın?"></textarea>
+          <div class="editor-footer">
+            <span class="model-current"><span class="model-current-icon">♫</span><span id="active-model-label">Piper · Fettah</span><span class="separator">•</span><span id="active-voice-label">Türkçe</span></span>
+            <button id="clear-text" class="text-action" type="button">Metni temizle</button>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="speak-button" class="primary-button" type="button"><span aria-hidden="true">▶</span> Seslendir</button>
+          <button id="wav-button" class="outline-button" disabled type="button">↓ &nbsp;WAV indir</button>
+          <button id="mp3-button" class="outline-button" disabled type="button">↓ &nbsp;MP3 indir</button>
+        </div>
+        <div id="activity" class="activity" role="status" aria-live="polite" hidden>
+          <div class="activity-top"><span id="activity-text"></span><span id="activity-percent"></span></div>
+          <div class="progress-track" aria-hidden="true"><span id="activity-bar"></span></div>
+          <button id="cancel-download" class="cancel-button" type="button" hidden>İndirmeyi iptal et</button>
+        </div>
+        <div id="error-box" class="error-box" role="alert" hidden></div>
+        <section id="audio-result" class="player-card" aria-label="Oluşturulan ses" hidden>
+          <div class="player-head"><span class="player-icon">♪</span><div><strong>Ses hazır</strong><small id="audio-details">Dinlemeye hazır</small></div></div>
+          <audio id="audio-player" controls preload="metadata"></audio>
+        </section>
+        <p class="privacy-note">♧ Metin ve ses hiçbir sunucuya gönderilmez. Model dosyaları ilk kullanımda indirilir.</p>
+      </section>
+      <section id="settings-page" class="page settings-page" hidden>
+        <button id="back-button" class="back-link" type="button">← Seslendirmeye dön</button>
+        <div class="settings-heading"><span class="eyebrow">KİŞİSELLEŞTİR</span><h1>Ayarlar</h1><p>Ses modellerini yönet ve konuşma şeklini ayarla.</p></div>
+        <section class="settings-section"><div class="section-heading"><h2>Ses modelleri</h2><p>İndirdiğin modeller tarayıcında saklanır; çevrimdışı da kullanılabilir.</p></div>
+          <div id="model-list" class="model-list"></div>
+          <p class="settings-footnote">Model dosyaları bu tarayıcının yerel alanında saklanır. Tarayıcı verileri temizlenirse silinir. Supertonic 3 ağırlıkları OpenRAIL-M lisanslıdır.</p>
+        </section>
+        <section class="settings-section"><div class="section-heading"><h2>Ses ayarları</h2><p>Seçili modele göre kullanılabilen seçenekler gösterilir.</p></div>
+          <div class="controls-card">
+            <div id="voice-setting" class="setting-row" hidden><div class="setting-label"><label for="voice-select">Ses karakteri</label><small>Supertonic'in gerçek ses stilleri</small></div><select id="voice-select"></select></div>
+            <div class="setting-row"><div class="setting-label"><label for="speed-range">Konuşma hızı</label><small id="speed-hint">Konuşma temposu</small></div><div class="slider-wrap"><input id="speed-range" type="range" min="0.75" max="1.35" step="0.05" value="1" /><output id="speed-value">1.00×</output></div></div>
+            <div id="tone-setting" class="setting-row" hidden><div class="setting-label"><label for="tone-select">Ses grubu</label><small>Modelin sunduğu kadın / erkek sesler</small></div><select id="tone-select"><option value="all">Tümü</option><option value="F">Kadın sesleri</option><option value="M">Erkek sesleri</option></select></div>
+            <p class="control-note" id="controls-note">Piper tek sesli bir modeldir; doğal çocuk sesi veya gerçek ton kontrolü sağlamaz.</p>
+          </div>
+        </section>
+        <section class="settings-section note-block"><strong>Gizlilik ve çevrimdışı kullanım</strong><p>ONNX çıkarımı cihazında çalışır. Bir API anahtarı veya backend gerekmez. İlk model indirmesi için internet gerekir.</p></section>
+      </section>
+    </main>
+    <footer class="footer">söylet <span>·</span> Tarayıcında ses üret, özgürce dinle.</footer>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

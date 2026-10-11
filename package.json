@@ -1,0 +1,23 @@
+{
+  "name": "soylet",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/prepare-runtime.mjs",
+    "dev": "vite",
+    "prebuild": "node scripts/prepare-runtime.mjs",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@breezystack/lamejs": "1.2.7",
+    "@diffusionstudio/piper-wasm": "1.0.0",
+    "@mintplex-labs/piper-tts-web": "1.0.3",
+    "onnxruntime-web": "1.18.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.21"
+  }
+}
