@@ -2,7 +2,18 @@ const CACHE = 'soylet-shell-v1';
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
-    await cache.add(new Request(self.registration.scope, { cache: 'reload' }));
+
+    // Precache the HTML and its Vite-generated entry JS/CSS on the first visit.
+    // The initial page load happens before the service worker controls this tab.
+    const response = await fetch(new Request(self.registration.scope, { cache: 'reload' }));
+    if (!response.ok) throw new Error('App shell could not be downloaded');
+    const html = await response.clone().text();
+    await cache.put(self.registration.scope, response);
+    const assets = [...html.matchAll(/(?:src|href)=["']([^"']+)["']/g)]
+      .map(match => new URL(match[1], self.registration.scope))
+      .filter(url => url.origin === self.location.origin && url.protocol.startsWith('http'))
+      .map(url => url.href);
+    await Promise.all(assets.map(url => cache.add(url).catch(() => {})));
     await self.skipWaiting();
   })());
 });
