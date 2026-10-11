@@ -15,13 +15,15 @@ test('brand is a clickable text-only home button', () => {
   assert.match(script, /\$\('home-link'\)\.addEventListener\('click'/);
 });
 
-test('settings opens directly on model list without the old introduction', () => {
+test('Models page opens directly on model list without the old settings introduction', () => {
   for (const removed of ['back-button', 'KİŞİSELLEŞTİR', 'Seslendirmeye dön',
     'Ses modellerini yönet ve konuşma şeklini ayarla.']) {
     assert.ok(!html.includes(removed), `Redundant text remains: ${removed}`);
     assert.ok(!script.includes("$('back-button')"));
   }
-  assert.match(html, /id="settings-page"[^>]*aria-label="Ayarlar"/);
+  assert.match(html, /id="models-page"[^>]*aria-label="Modeller"/);
+  assert.match(html, /id="models-link"[^>]*aria-controls="models-page"/);
+  assert.doesNotMatch(html, /<h2>Ses ayarları<\/h2>|id="speed-range"|id="voice-select"|id="tone-select"/);
   assert.match(html, /<h2>Ses modelleri<\/h2>/);
 });
 

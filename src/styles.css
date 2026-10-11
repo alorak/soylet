@@ -162,3 +162,27 @@ body{background:#f5f8fc;color:#192b42}
  .quick-speed input[type="range"]{margin-bottom:11px}
  .footer{padding:7px 12px 15px}
 }
+
+
+/* Model management navigation and repository link */
+.footer{
+  white-space:normal;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  column-gap:7px;
+  row-gap:2px;
+  max-width:1100px;
+  margin:0 auto;
+  line-height:1.7;
+}
+.footer span{margin:0}
+.footer a{
+  color:#1b4d82;
+  font-weight:750;
+  text-decoration:none;
+  text-underline-offset:3px;
+}
+.footer a:hover{text-decoration:underline}
+.footer a:focus-visible{outline:2px solid #8db7dc;outline-offset:3px;border-radius:2px}

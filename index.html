@@ -12,9 +12,9 @@
   <div id="app">
     <header class="topbar">
       <button class="brand" id="home-link" type="button" aria-label="söylet ana sayfa">söylet<span class="brand-dot">.</span></button>
-      <button id="settings-link" class="settings-trigger" type="button" aria-expanded="false" aria-controls="settings-page">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a2 2 0 0 0 .4 2l-2.8 2.8a2 2 0 0 0-2-.4l-.7 1.8h-4.6L9 19.4a2 2 0 0 0-2 .4L4.2 17a2 2 0 0 0 .4-2L2.8 14v-4l1.8-1a2 2 0 0 0-.4-2L7 4.2a2 2 0 0 0 2 .4l.7-1.8h4.6l.7 1.8a2 2 0 0 0 2-.4L19.8 7a2 2 0 0 0-.4 2l1.8 1v4Z"/></svg>
-        Ayarlar
+      <button id="models-link" class="settings-trigger" type="button" aria-expanded="false" aria-controls="models-page">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Modeller
       </button>
     </header>
     <main class="container">
@@ -64,23 +64,15 @@
           <audio id="audio-player" controls preload="metadata"></audio>
         </section>
       </section>
-      <section id="settings-page" class="page settings-page" aria-label="Ayarlar" hidden>
+      <section id="models-page" class="page settings-page" aria-label="Modeller" hidden>
         <section class="settings-section"><div class="section-heading"><h2>Ses modelleri</h2><p>İndirilen modeller bu tarayıcıda saklanır.</p></div>
           <div id="model-list" class="model-list"></div>
           <p class="settings-footnote">Model dosyaları bu tarayıcının yerel alanında saklanır. Tarayıcı verileri temizlenirse silinir. Supertonic 3 ağırlıkları OpenRAIL-M lisanslıdır.</p>
         </section>
-        <section class="settings-section"><div class="section-heading"><h2>Ses ayarları</h2><p>Seçili modele göre kullanılabilen seçenekler gösterilir.</p></div>
-          <div class="controls-card">
-            <div id="voice-setting" class="setting-row" hidden><div class="setting-label"><label for="voice-select">Ses karakteri</label><small>Supertonic'in gerçek ses stilleri</small></div><select id="voice-select"></select></div>
-            <div class="setting-row"><div class="setting-label"><label for="speed-range">Konuşma hızı</label><small id="speed-hint">Konuşma temposu</small></div><div class="slider-wrap"><input id="speed-range" type="range" min="0.75" max="1.35" step="0.05" value="1" /><output id="speed-value">1.00×</output></div></div>
-            <div id="tone-setting" class="setting-row" hidden><div class="setting-label"><label for="tone-select">Ses grubu</label><small>Modelin sunduğu kadın / erkek sesler</small></div><select id="tone-select"><option value="all">Tümü</option><option value="F">Kadın sesleri</option><option value="M">Erkek sesleri</option></select></div>
-            <p class="control-note" id="controls-note">Piper tek sesli bir modeldir; doğal çocuk sesi veya gerçek ton kontrolü sağlamaz.</p>
-          </div>
-        </section>
         <section class="settings-section note-block"><strong>Gizlilik ve çevrimdışı kullanım</strong><p>ONNX çıkarımı cihazında çalışır. Bir API anahtarı veya backend gerekmez. İlk model indirmesi için internet gerekir.</p></section>
       </section>
     </main>
-    <footer class="footer">söylet <span>·</span> Tarayıcında ses üret, özgürce dinle. <span>·</span> Metin ve ses hiçbir sunucuya gönderilmez; model dosyaları ilk kullanımda indirilir.</footer>
+    <footer class="footer">söylet <span>·</span> Tarayıcında ses üret, özgürce dinle. <span>·</span> Metin ve ses hiçbir sunucuya gönderilmez; model dosyaları ilk kullanımda indirilir. <span>·</span> <a href="https://github.com/alorak/soylet" target="_blank" rel="noopener noreferrer" aria-label="söylet GitHub kaynak kodu">GitHub</a></footer>
   </div>
   <script type="module" src="/src/main.js"></script>
 </body>

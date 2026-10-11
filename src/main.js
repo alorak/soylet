@@ -15,7 +15,6 @@ const state = {
   modelId: getModel(saved.modelId) ? saved.modelId : DEFAULT_MODEL_ID,
   voice: VOICE_STYLES.includes(saved.voice) ? saved.voice : 'F1',
   speed: Number.isFinite(saved.speed) && saved.speed >= 0.75 && saved.speed <= 1.35 ? saved.speed : 1,
-  toneGroup: 'all',
   installed: new Set(),
   busy: false,
   controller: null,
@@ -61,9 +60,6 @@ function refreshBusy() {
   $('mp3-button').disabled = state.busy || !state.audio;
   textInput.disabled = state.busy;
   $('clear-text').disabled = state.busy;
-  $('speed-range').disabled = state.busy;
-  $('voice-select').disabled = state.busy;
-  $('tone-select').disabled = state.busy;
   renderQuickControls();
   renderModels();
 }
@@ -80,8 +76,8 @@ const modelPicker = createPicker({
       return;
     }
     // A model that is not downloaded stays unavailable until installed.
-    // Direct the user to the matching green download button in Settings.
-    showPage('settings');
+    // Direct the user to the matching green download button on the Models page.
+    showPage('models');
     const index = MODELS.findIndex(model => model.id === choice.id);
     const card = $('model-list').children[index];
     card?.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -96,7 +92,6 @@ const voicePicker = createPicker({
   onSelect: (choice) => {
     if (state.busy || state.voice === choice.id) return;
     state.voice = choice.id;
-    state.toneGroup = 'all';
     updateVoiceOptions();
     persist();
     clearResult();
@@ -175,38 +170,13 @@ function renderModels() {
     root.append(card);
   }
 }
+// Voice and speed are selected exclusively on the homepage.
 function updateVoiceOptions() {
-  const model = getModel(state.modelId);
-  const isSupertonic = model.engine === 'supertonic';
-  $('voice-setting').hidden = !isSupertonic;
-  $('tone-setting').hidden = !isSupertonic;
-  $('speed-hint').textContent = isSupertonic
-    ? 'Modelin doğal konuşma temposu'
-    : 'Hız değişimi ses perdesini de az miktarda etkiler';
-  $('controls-note').textContent = isSupertonic
-    ? 'Kadın/erkek seçenekleri modelin 10 hazır ses karakteridir. Çocuk sesi veya bağımsız perde kontrolü bulunmaz.'
-    : 'Piper tek sesli bir modeldir. Gerçek çocuk sesi, bağımsız ince/kalın ton veya başka bir ses karakteri desteklemez.';
-  const select = $('voice-select');
-  const group = $('tone-select');
-  group.value = state.toneGroup;
-  const filtered = VOICE_STYLES.filter(voice => state.toneGroup === 'all' || voice.startsWith(state.toneGroup));
-  if (!filtered.includes(state.voice)) state.voice = filtered[0];
-  select.replaceChildren();
-  for (const voice of filtered) {
-    const option = document.createElement('option');
-    option.value = voice;
-    option.textContent = `${voice.startsWith('F') ? 'Kadın' : 'Erkek'} ${voice.slice(1)} (${voice})`;
-    select.append(option);
-  }
-  select.value = state.voice;
-  $('speed-range').value = String(state.speed);
-  $('speed-value').value = `${state.speed.toFixed(2)}×`;
   renderQuickControls();
 }
 function selectModel(id) {
   if (state.busy || !modelIsAvailable(id)) return;
   state.modelId = id;
-  state.toneGroup = 'all';
   persist();
   clearResult();
   clearError();
@@ -214,16 +184,16 @@ function selectModel(id) {
   renderModels();
 }
 function showPage(page) {
-  const settings = page === 'settings';
+  const models = page === 'models';
   closePickers();
-  $('home-page').hidden = settings;
-  $('settings-page').hidden = !settings;
-  $('settings-link').setAttribute('aria-expanded', String(settings));
-  const target = settings ? $('settings-page') : $('home-page');
-  const anchor = settings ? target.querySelector('.settings-section') : $('audio-result');
+  $('home-page').hidden = models;
+  $('models-page').hidden = !models;
+  $('models-link').setAttribute('aria-expanded', String(models));
+  const target = models ? $('models-page') : $('home-page');
+  const anchor = models ? target.querySelector('.settings-section') : $('audio-result');
   target.insertBefore($('activity'), anchor);
   target.insertBefore($('error-box'), anchor);
-  if (settings) renderModels();
+  if (models) renderModels();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 async function installModel(model, chooseAfter = false) {
@@ -243,8 +213,7 @@ async function installModel(model, chooseAfter = false) {
       : chooseAvailableModel(state.modelId, MODELS, state.installed, DEFAULT_MODEL_ID);
     if (nextModel !== state.modelId) {
       state.modelId = nextModel;
-      state.toneGroup = 'all';
-      clearResult();
+        clearResult();
       updateVoiceOptions();
       persist();
     }
@@ -269,8 +238,7 @@ async function deleteModel(model) {
     state.installed.delete(model.id);
     if (state.modelId === model.id) {
       state.modelId = chooseAvailableModel(state.modelId, MODELS, state.installed, DEFAULT_MODEL_ID);
-      state.toneGroup = 'all';
-      updateVoiceOptions();
+        updateVoiceOptions();
       persist();
     }
     clearResult();
@@ -333,7 +301,7 @@ async function downloadSound(format) {
   }
 }
 $('home-link').addEventListener('click', () => showPage('home'));
-$('settings-link').addEventListener('click', () => showPage($('settings-page').hidden ? 'settings' : 'home'));
+$('models-link').addEventListener('click', () => showPage($('models-page').hidden ? 'models' : 'home'));
 textInput.addEventListener('input', () => {
   $('character-count').textContent = `${textInput.value.length} karakter`;
   clearResult(); clearError(); refreshBusy();
@@ -345,25 +313,15 @@ $('speak-button').addEventListener('click', speak);
 $('wav-button').addEventListener('click', () => downloadSound('wav'));
 $('mp3-button').addEventListener('click', () => downloadSound('mp3'));
 $('cancel-download').addEventListener('click', () => state.controller?.abort());
-$('voice-select').addEventListener('change', event => {
-  state.voice = event.target.value;
-  persist(); clearResult(); renderQuickControls();
-});
 $('quick-speed-range').addEventListener('input', event => setSpeed(event.target.value));
-$('tone-select').addEventListener('change', event => {
-  state.toneGroup = event.target.value; updateVoiceOptions(); persist(); clearResult();
-});
 function setSpeed(value) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return;
   state.speed = Math.min(1.35, Math.max(0.75, Math.round(parsed * 20) / 20));
-  $('speed-range').value = String(state.speed);
-  $('speed-value').value = `${state.speed.toFixed(2)}×`;
   updateSpeedSlider();
   persist();
   clearResult();
 }
-$('speed-range').addEventListener('input', event => setSpeed(event.target.value));
 async function initialize() {
   updateVoiceOptions();
   refreshBusy();
@@ -376,8 +334,7 @@ async function initialize() {
     const current = chooseAvailableModel(state.modelId, MODELS, state.installed, DEFAULT_MODEL_ID);
     if (state.modelId !== current) {
       state.modelId = current;
-      state.toneGroup = 'all';
-      persist();
+        persist();
     }
     updateVoiceOptions();
     renderModels();
