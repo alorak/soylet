@@ -25,9 +25,9 @@ Sunucu API'si, veritabanı veya API anahtarı gerekmez. GitHub Pages iş akış�
 
 1. Metni yaz ve **Seslendir** düğmesine bas. İlk kullanımda varsayılan **Piper Fettah** modelini otomatik indirir (yaklaşık 63 MB).
 2. Ses oluştuğunda oynat, **WAV indir** veya **MP3 indir**.
-3. Ana sayfada özel **Model** menüsü bütün modelleri gösterir. İndirilenler seçilebilir; indirilmemiş modellerde **Aktif edilmeli** yazısı bulunur. Bu modele basıldığında Ayarlar'daki ilgili yeşil **İndir** düğmesine yönlendirilirsin. **Seslendir** ilk kullanımda varsayılan Piper modelini otomatik indirir.
+3. Ana sayfada özel **Model** menüsü bütün modelleri gösterir. İndirilenler seçilebilir; indirilmemiş modellerde **Aktif edilmeli** yazısı bulunur. Bu modele basıldığında Modeller sayfasındaki ilgili yeşil **İndir** düğmesine yönlendirilirsin. **Seslendir** ilk kullanımda varsayılan Piper modelini otomatik indirir.
 4. **Hız** ayarı sürüklenebilir 0,75×–1,35× çubuğudur. Supertonic 3 seçilirse ayrıca özel **Ses karakteri** menüsüyle F1–F5/M1–M5 seçebilirsin. Menüler klavyeyle de kullanılabilir. Piper'de ses karakteri gösterilmez.
-5. Sağ üstten **Ayarlar** bölümüne git. Henüz indirilmemiş modeller gri kartla ve yeşil **İndir** düğmesiyle gösterilir. İndirilen modellerdeki **Varsayılan seç** düğmesi, uygulamanın seçili ses modelini değiştirir; bu seçim tarayıcıda saklanır. Model indirmek artık mevcut varsayılan modeli kendiliğinden değiştirmez. Buradaki model, hız ve ses ayarları ana sayfa ile senkronize kalır. Üstteki tıklanabilir **söylet.** yazısı ana sayfaya götürür.
+5. Sağ üstten **Modeller** sayfasına git. Henüz indirilmemiş modeller gri kartla ve yeşil **İndir** düğmesiyle gösterilir. İndirilen modellerdeki **Varsayılan seç** düğmesi, uygulamanın seçili ses modelini değiştirir; bu seçim tarayıcıda saklanır. Model indirmek artık mevcut varsayılan modeli kendiliğinden değiştirmez. Ses karakteri ve hız kontrolleri yalnızca ana sayfadadır. Üstteki tıklanabilir **söylet.** yazısı ana sayfaya götürür. Alt bilgide projenin [GitHub deposuna](https://github.com/alorak/soylet) bağlantı vardır.
 
 ## Modeller
 
