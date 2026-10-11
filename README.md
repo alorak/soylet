@@ -25,8 +25,9 @@ Sunucu API'si, veritabanı veya API anahtarı gerekmez. GitHub Pages iş akış�
 
 1. Metni yaz ve **Seslendir** düğmesine bas. İlk kullanımda varsayılan **Piper Fettah** modelini otomatik indirir (yaklaşık 63 MB).
 2. Ses oluştuğunda oynat, **WAV indir** veya **MP3 indir**.
-3. Sağ üstten **Ayarlar** bölümüne git. Modelleri indir, seç veya tarayıcından sil.
-4. Supertonic 3 seçilirse kadın/erkek ses stilleri (F1–F5, M1–M5), her iki motor için hız seçimi vardır.
+3. Ana sayfadaki **Model** listesinden yalnızca önceden indirilmiş modelleri seç. Henüz model yoksa **Model indir** bağlantısı Ayarlar'a götürür; doğrudan Seslendir'e basmak da varsayılan Piper modelini indirir.
+4. Ana sayfadan **Hız** seç; Supertonic 3 seçildiğinde aynı satırda **Ses karakteri** (F1–F5, M1–M5) de görünür. Piper'de ses karakteri sunulmaz.
+5. Sağ üstten **Ayarlar** bölümüne git. Modelleri indir veya sil; buradaki model, hız ve ses ayarları ana sayfa ile senkronize kalır.
 
 ## Modeller
 
