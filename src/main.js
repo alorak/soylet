@@ -2,6 +2,7 @@ import './styles.css';
 import { DEFAULT_MODEL_ID, MODELS, VOICE_STYLES, getModel, installedModelIds, downloadModel, removeModel, storageSupported } from './models.js';
 import { synthesize, forgetEngine } from './tts.js';
 import { decodeAudio, makeWav, makeMp3, saveFile } from './audio.js';
+import { availableModels, chooseAvailableModel, modelVoices, SPEED_OPTIONS } from './quick-controls.js';
 
 const $ = id => document.getElementById(id);
 const STORAGE_KEY = 'soylet-settings-v1';
@@ -62,14 +63,46 @@ function refreshBusy() {
   $('speed-range').disabled = state.busy;
   $('voice-select').disabled = state.busy;
   $('tone-select').disabled = state.busy;
+  renderQuickControls();
   renderModels();
 }
 function setBusy(busy) { state.busy = busy; refreshBusy(); }
 function modelIsAvailable(id) { return state.installed.has(id); }
-function refreshActiveLabel() {
-  const model = getModel(state.modelId);
-  $('active-model-label').textContent = model.title;
-  $('active-voice-label').textContent = model.engine === 'supertonic' ? `${state.voice} · Türkçe` : 'Türkçe';
+function renderQuickControls() {
+  const modelSelect = $('quick-model-select');
+  const downloaded = availableModels(MODELS, state.installed);
+  modelSelect.replaceChildren();
+  if (!downloaded.length) {
+    const empty = new Option('Henüz indirilmiş model yok', '');
+    modelSelect.add(empty);
+    modelSelect.disabled = true;
+    $('quick-model-setup').hidden = false;
+  } else {
+    for (const model of downloaded) modelSelect.add(new Option(model.title, model.id));
+    modelSelect.value = state.modelId;
+    modelSelect.disabled = state.busy;
+    $('quick-model-setup').hidden = true;
+  }
+  $('quick-model-setup').disabled = state.busy;
+
+  const voices = modelVoices(getModel(state.modelId), VOICE_STYLES);
+  const voiceWrap = $('quick-voice-control');
+  const voiceSelect = $('quick-voice-select');
+  voiceWrap.hidden = voices.length === 0;
+  voiceSelect.replaceChildren();
+  for (const voice of voices) {
+    voiceSelect.add(new Option(
+      `${voice.startsWith('F') ? 'Kadın' : 'Erkek'} ${voice.slice(1)} (${voice})`, voice
+    ));
+  }
+  if (voices.length) voiceSelect.value = state.voice;
+  voiceSelect.disabled = state.busy || !voices.length;
+
+  const speedSelect = $('quick-speed-select');
+  speedSelect.replaceChildren();
+  for (const value of SPEED_OPTIONS) speedSelect.add(new Option(`${Number(value).toFixed(2)}×`, value));
+  speedSelect.value = state.speed.toFixed(2);
+  speedSelect.disabled = state.busy;
 }
 function renderModels() {
   const root = $('model-list');
@@ -140,7 +173,7 @@ function updateVoiceOptions() {
   select.value = state.voice;
   $('speed-range').value = String(state.speed);
   $('speed-value').value = `${state.speed.toFixed(2)}×`;
-  refreshActiveLabel();
+  renderQuickControls();
 }
 function selectModel(id) {
   if (state.busy || !modelIsAvailable(id)) return;
@@ -183,6 +216,7 @@ async function installModel(model, chooseAfter = false) {
       updateVoiceOptions();
       persist();
     }
+    renderQuickControls();
     showActivity(`${model.title} indirildi, kullanıma hazır.`, 100);
   } catch (error) {
     if (error?.name === 'AbortError') showError('İndirme iptal edildi. İstersen kaldığı dosyadan devam edebilirsin.');
@@ -202,13 +236,13 @@ async function deleteModel(model) {
     await removeModel(model);
     state.installed.delete(model.id);
     if (state.modelId === model.id) {
-      state.modelId = DEFAULT_MODEL_ID;
-      if (!state.installed.has(state.modelId) && state.installed.size) state.modelId = [...state.installed][0];
+      state.modelId = chooseAvailableModel(state.modelId, MODELS, state.installed, DEFAULT_MODEL_ID);
       state.toneGroup = 'all';
       updateVoiceOptions();
       persist();
     }
     clearResult();
+    renderQuickControls();
   } catch (error) {
     showError(error?.message || 'Model silinemedi.');
   } finally {
@@ -281,16 +315,33 @@ $('wav-button').addEventListener('click', () => downloadSound('wav'));
 $('mp3-button').addEventListener('click', () => downloadSound('mp3'));
 $('cancel-download').addEventListener('click', () => state.controller?.abort());
 $('voice-select').addEventListener('change', event => {
-  state.voice = event.target.value; persist(); clearResult(); refreshActiveLabel();
+  state.voice = event.target.value;
+  persist(); clearResult(); renderQuickControls();
 });
+$('quick-model-select').addEventListener('change', event => selectModel(event.target.value));
+$('quick-model-setup').addEventListener('click', () => showPage('settings'));
+$('quick-voice-select').addEventListener('change', event => {
+  state.voice = event.target.value;
+  state.toneGroup = 'all';
+  updateVoiceOptions();
+  persist();
+  clearResult();
+});
+$('quick-speed-select').addEventListener('change', event => setSpeed(event.target.value));
 $('tone-select').addEventListener('change', event => {
   state.toneGroup = event.target.value; updateVoiceOptions(); persist(); clearResult();
 });
-$('speed-range').addEventListener('input', event => {
-  state.speed = Number(event.target.value);
+function setSpeed(value) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return;
+  state.speed = Math.min(1.35, Math.max(0.75, Math.round(parsed * 20) / 20));
+  $('speed-range').value = String(state.speed);
   $('speed-value').value = `${state.speed.toFixed(2)}×`;
-  persist(); clearResult();
-});
+  $('quick-speed-select').value = state.speed.toFixed(2);
+  persist();
+  clearResult();
+}
+$('speed-range').addEventListener('input', event => setSpeed(event.target.value));
 async function initialize() {
   updateVoiceOptions();
   refreshBusy();
@@ -300,6 +351,13 @@ async function initialize() {
   }
   try {
     state.installed = new Set(await installedModelIds());
+    const current = chooseAvailableModel(state.modelId, MODELS, state.installed, DEFAULT_MODEL_ID);
+    if (state.modelId !== current) {
+      state.modelId = current;
+      state.toneGroup = 'all';
+      persist();
+    }
+    updateVoiceOptions();
     renderModels();
     if (typeof navigator.storage.persist === 'function') {
       navigator.storage.persist().catch(() => {});
