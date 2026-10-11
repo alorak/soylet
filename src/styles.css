@@ -110,3 +110,55 @@ body{background:#f5f8fc;color:#192b42}
   .setting-row{min-height:59px}
   .setting-row select{min-width:112px}
 }
+
+
+/* Bespoke model and voice selectors; all models remain discoverable */
+.editor-card{position:relative;overflow:visible}
+.editor-footer{position:relative;border-radius:0 0 15px 15px}
+.quick-controls{align-items:end;gap:12px}
+.picker-control{position:relative}
+.quick-model{flex:1 1 260px}
+.quick-voice{flex:1 1 170px}
+.quick-speed{flex:0 1 160px;min-width:145px}
+.picker-label,.speed-heading label{font-size:11px;color:#62758a;font-weight:750;letter-spacing:.15px}
+.picker-trigger{width:100%;height:43px;padding:0 12px 0 14px;background:#f6f9fc;border:1px solid #dbe5ee;border-radius:11px;color:#193652;display:flex;align-items:center;justify-content:space-between;gap:9px;text-align:left;transition:border-color .15s,background .15s,box-shadow .15s}
+.picker-trigger:hover:not(:disabled){background:#edf4fb;border-color:#9bbbd8}
+.picker-trigger[aria-expanded="true"]{background:#fff;border-color:#5281ac;box-shadow:0 0 0 3px #90b9df30}
+.picker-value{font-weight:720;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.picker-chevron{width:17px;height:17px;flex:0 0 17px;fill:none;stroke:#526c84;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.picker-trigger[aria-expanded="true"] .picker-chevron{transform:rotate(180deg)}
+.picker-popover{position:absolute;z-index:50;left:0;top:calc(100% + 7px);width:max(100%,280px);max-width:min(360px,calc(100vw - 35px));padding:6px;background:#fff;border:1px solid #d5e2ee;border-radius:14px;box-shadow:0 16px 38px #122e4a27;max-height:310px;overflow:auto}
+.voice-popover{width:max(100%,235px);max-width:min(290px,calc(100vw - 35px))}
+.picker-option{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:11px 12px;background:none;border:0;border-radius:9px;text-align:left;color:#183a5a;transition:background .12s}
+.picker-option:hover,.picker-option:focus-visible{outline:none;background:#edf5fc}
+.picker-option[aria-selected="true"]{background:#e6f0fa}
+.picker-option.unavailable{color:#8492a3;background:#f8fafc}
+.picker-option.unavailable:hover,.picker-option.unavailable:focus-visible{background:#eef2f6}
+.picker-option-name{font-weight:700;font-size:13px;line-height:1.35}
+.picker-option-status{font-size:10px;white-space:nowrap;border-radius:16px;background:#e5eef8;color:#245780;padding:4px 7px;flex-shrink:0;font-weight:700}
+.picker-option.unavailable .picker-option-status{background:#e5eaf0;color:#718094}
+.picker-option-voice{display:flex;align-items:center;gap:10px}
+.voice-avatar{display:grid;place-items:center;width:31px;height:31px;border-radius:9px;background:#e9f2fb;color:#245780;font-size:12px;font-weight:800}
+.picker-option[aria-selected="true"] .voice-avatar{background:#d3e6f8}
+.speed-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:11px}
+.speed-heading output{font-size:12px;color:#1a4a78;font-weight:800;font-variant-numeric:tabular-nums}
+.quick-speed input[type="range"]{appearance:none;-webkit-appearance:none;width:100%;height:7px;margin:6px 0 13px;background:linear-gradient(90deg,#1e527f 0%,#1e527f var(--speed-fill,42%),#d6e4f0 var(--speed-fill,42%),#d6e4f0 100%);border-radius:999px;cursor:pointer}
+.quick-speed input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;border:3px solid white;background:#1b4a77;box-shadow:0 0 0 1px #a9c1d7,0 2px 5px #12395a33}
+.quick-speed input[type="range"]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;border:3px solid white;background:#1b4a77;box-shadow:0 0 0 1px #a9c1d7,0 2px 5px #12395a33}
+.quick-speed input[type="range"]:focus-visible{outline:3px solid #a3c4e4;outline-offset:7px}
+.footer{white-space:nowrap;font-size:11px}
+@media(max-width:780px){
+ .footer{white-space:normal;max-width:670px;margin:auto;line-height:1.65}
+}
+@media(max-width:630px){
+ .quick-controls{gap:9px}
+ .quick-model{flex:1 1 100%}
+ .quick-voice{flex:1 1 160px}
+ .quick-speed{flex:1 1 125px;min-width:115px}
+ .picker-trigger{height:41px}
+ .picker-popover{width:min(360px,calc(100vw - 42px))}
+ .voice-popover{right:0;left:auto;width:min(270px,calc(100vw - 42px))}
+ .speed-heading{margin-bottom:9px}
+ .quick-speed input[type="range"]{margin-bottom:11px}
+ .footer{padding:7px 12px 15px}
+}
