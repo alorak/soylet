@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#fafafd" />
+  <meta name="theme-color" content="#f5f8fc" />
   <meta name="description" content="Türkçe metinleri tamamen tarayıcında seslendir; WAV veya MP3 olarak kaydet." />
   <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
   <title>söylet — metnini seslendir</title>
@@ -11,7 +11,7 @@
 <body>
   <div id="app">
     <header class="topbar">
-      <button class="brand" id="home-link" type="button" aria-label="söylet ana sayfa"><span class="brand-icon" aria-hidden="true">◖))</span><span>söylet<span class="brand-dot">.</span></span></button>
+      <button class="brand" id="home-link" type="button" aria-label="söylet ana sayfa">söylet<span class="brand-dot">.</span></button>
       <button id="settings-link" class="settings-trigger" type="button" aria-expanded="false" aria-controls="settings-page">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a2 2 0 0 0 .4 2l-2.8 2.8a2 2 0 0 0-2-.4l-.7 1.8h-4.6L9 19.4a2 2 0 0 0-2 .4L4.2 17a2 2 0 0 0 .4-2L2.8 14v-4l1.8-1a2 2 0 0 0-.4-2L7 4.2a2 2 0 0 0 2 .4l.7-1.8h4.6l.7 1.8a2 2 0 0 0 2-.4L19.8 7a2 2 0 0 0-.4 2l1.8 1v4Z"/></svg>
         Ayarlar
@@ -58,10 +58,8 @@
         </section>
         <p class="privacy-note">♧ Metin ve ses hiçbir sunucuya gönderilmez. Model dosyaları ilk kullanımda indirilir.</p>
       </section>
-      <section id="settings-page" class="page settings-page" hidden>
-        <button id="back-button" class="back-link" type="button">← Seslendirmeye dön</button>
-        <div class="settings-heading"><span class="eyebrow">KİŞİSELLEŞTİR</span><h1>Ayarlar</h1><p>Ses modellerini yönet ve konuşma şeklini ayarla.</p></div>
-        <section class="settings-section"><div class="section-heading"><h2>Ses modelleri</h2><p>İndirdiğin modeller tarayıcında saklanır; çevrimdışı da kullanılabilir.</p></div>
+      <section id="settings-page" class="page settings-page" aria-label="Ayarlar" hidden>
+        <section class="settings-section"><div class="section-heading"><h2>Ses modelleri</h2><p>İndirilen modeller bu tarayıcıda saklanır.</p></div>
           <div id="model-list" class="model-list"></div>
           <p class="settings-footnote">Model dosyaları bu tarayıcının yerel alanında saklanır. Tarayıcı verileri temizlenirse silinir. Supertonic 3 ağırlıkları OpenRAIL-M lisanslıdır.</p>
         </section>
