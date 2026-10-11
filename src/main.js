@@ -157,6 +157,10 @@ function showPage(page) {
   $('home-page').hidden = settings;
   $('settings-page').hidden = !settings;
   $('settings-link').setAttribute('aria-expanded', String(settings));
+  const target = settings ? $('settings-page') : $('home-page');
+  const anchor = settings ? target.querySelector('.settings-section') : $('audio-result');
+  target.insertBefore($('activity'), anchor);
+  target.insertBefore($('error-box'), anchor);
   if (settings) renderModels();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
