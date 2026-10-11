@@ -25,18 +25,25 @@
           <textarea id="text-input" maxlength="5000" rows="6" spellcheck="true" placeholder="Merhaba! Bugün anlatacak güzel bir hikâyem var. Hazır mısın?"></textarea>
           <div class="editor-footer">
             <div class="quick-controls" role="group" aria-label="Seslendirme seçenekleri">
-              <div class="quick-control quick-model">
-                <label for="quick-model-select">Model</label>
-                <select id="quick-model-select"><option value="" disabled selected>Modeller kontrol ediliyor…</option></select>
+              <div class="quick-control quick-model picker-control" id="quick-model-control">
+                <span class="picker-label" id="quick-model-label">Model</span>
+                <button id="quick-model-trigger" class="picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="quick-model-options" aria-labelledby="quick-model-label quick-model-value">
+                  <span class="picker-value" id="quick-model-value">Modeller kontrol ediliyor…</span>
+                  <svg class="picker-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div id="quick-model-options" class="picker-popover" role="listbox" aria-labelledby="quick-model-label" hidden></div>
               </div>
-              <button id="quick-model-setup" class="quick-model-setup" type="button" hidden>Model indir</button>
-              <div id="quick-voice-control" class="quick-control quick-voice" hidden>
-                <label for="quick-voice-select">Ses karakteri</label>
-                <select id="quick-voice-select"></select>
+              <div id="quick-voice-control" class="quick-control quick-voice picker-control" hidden>
+                <span class="picker-label" id="quick-voice-label">Ses karakteri</span>
+                <button id="quick-voice-trigger" class="picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="quick-voice-options" aria-labelledby="quick-voice-label quick-voice-value">
+                  <span class="picker-value" id="quick-voice-value">Kadın 1 (F1)</span>
+                  <svg class="picker-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div id="quick-voice-options" class="picker-popover voice-popover" role="listbox" aria-labelledby="quick-voice-label" hidden></div>
               </div>
               <div class="quick-control quick-speed">
-                <label for="quick-speed-select">Hız</label>
-                <select id="quick-speed-select" aria-label="Konuşma hızı"></select>
+                <div class="speed-heading"><label for="quick-speed-range">Hız</label><output id="quick-speed-value" for="quick-speed-range">1.00×</output></div>
+                <input id="quick-speed-range" type="range" min="0.75" max="1.35" step="0.05" value="1" aria-label="Konuşma hızı" />
               </div>
             </div>
           </div>
@@ -56,7 +63,6 @@
           <div class="player-head"><span class="player-icon">♪</span><div><strong>Ses hazır</strong><small id="audio-details">Dinlemeye hazır</small></div></div>
           <audio id="audio-player" controls preload="metadata"></audio>
         </section>
-        <p class="privacy-note">♧ Metin ve ses hiçbir sunucuya gönderilmez. Model dosyaları ilk kullanımda indirilir.</p>
       </section>
       <section id="settings-page" class="page settings-page" aria-label="Ayarlar" hidden>
         <section class="settings-section"><div class="section-heading"><h2>Ses modelleri</h2><p>İndirilen modeller bu tarayıcıda saklanır.</p></div>
@@ -74,7 +80,7 @@
         <section class="settings-section note-block"><strong>Gizlilik ve çevrimdışı kullanım</strong><p>ONNX çıkarımı cihazında çalışır. Bir API anahtarı veya backend gerekmez. İlk model indirmesi için internet gerekir.</p></section>
       </section>
     </main>
-    <footer class="footer">söylet <span>·</span> Tarayıcında ses üret, özgürce dinle.</footer>
+    <footer class="footer">söylet <span>·</span> Tarayıcında ses üret, özgürce dinle. <span>·</span> Metin ve ses hiçbir sunucuya gönderilmez; model dosyaları ilk kullanımda indirilir.</footer>
   </div>
   <script type="module" src="/src/main.js"></script>
 </body>

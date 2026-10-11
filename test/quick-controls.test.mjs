@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { MODELS, DEFAULT_MODEL_ID, VOICE_STYLES } from '../src/models.js';
-import { availableModels, chooseAvailableModel, modelVoices, SPEED_OPTIONS } from '../src/quick-controls.js';
+import { availableModels, chooseAvailableModel, modelVoices, SPEED_OPTIONS, modelMenuChoices } from '../src/quick-controls.js';
 
 test('homepage shows only downloaded models, preserving catalogue order', () => {
   const downloaded = new Set(['piper-dfki', 'supertonic-3']);
@@ -41,4 +41,14 @@ test('homepage speed choices match the settings slider increments', () => {
   assert.equal(SPEED_OPTIONS.at(-1), '1.35');
   assert.ok(SPEED_OPTIONS.includes('1.00'));
   assert.equal(new Set(SPEED_OPTIONS).size, SPEED_OPTIONS.length);
+});
+
+test('model picker shows downloaded and not-yet-activated models together', () => {
+  const installed = new Set(['piper-fettah', 'supertonic-3']);
+  const choices = modelMenuChoices(MODELS, installed, 'supertonic-3');
+  assert.deepEqual(choices.map(c => c.id), MODELS.map(model => model.id));
+  assert.equal(choices.find(c => c.id === 'supertonic-3').status, 'Seçili');
+  assert.equal(choices.find(c => c.id === 'piper-fettah').status, 'İndirildi');
+  assert.equal(choices.find(c => c.id === 'piper-dfki').status, 'Aktif edilmeli');
+  assert.equal(choices.find(c => c.id === 'piper-dfki').installed, false);
 });

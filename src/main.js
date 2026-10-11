@@ -2,7 +2,8 @@ import './styles.css';
 import { DEFAULT_MODEL_ID, MODELS, VOICE_STYLES, getModel, installedModelIds, downloadModel, removeModel, storageSupported } from './models.js';
 import { synthesize, forgetEngine } from './tts.js';
 import { decodeAudio, makeWav, makeMp3, saveFile } from './audio.js';
-import { availableModels, chooseAvailableModel, modelVoices, SPEED_OPTIONS } from './quick-controls.js';
+import { chooseAvailableModel, modelVoices, modelMenuChoices } from './quick-controls.js';
+import { createPicker, closePickers } from './pickers.js';
 
 const $ = id => document.getElementById(id);
 const STORAGE_KEY = 'soylet-settings-v1';
@@ -68,41 +69,68 @@ function refreshBusy() {
 }
 function setBusy(busy) { state.busy = busy; refreshBusy(); }
 function modelIsAvailable(id) { return state.installed.has(id); }
+const modelPicker = createPicker({
+  trigger: $('quick-model-trigger'),
+  popover: $('quick-model-options'),
+  control: $('quick-model-control'),
+  type: 'model',
+  onSelect: (choice) => {
+    if (choice.installed) {
+      selectModel(choice.id);
+      return;
+    }
+    // A model that is not downloaded stays unavailable until installed.
+    // Direct the user to the matching green download button in Settings.
+    showPage('settings');
+    const index = MODELS.findIndex(model => model.id === choice.id);
+    const card = $('model-list').children[index];
+    card?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    card?.querySelector('.small-button.download')?.focus({ preventScroll: true });
+  }
+});
+const voicePicker = createPicker({
+  trigger: $('quick-voice-trigger'),
+  popover: $('quick-voice-options'),
+  control: $('quick-voice-control'),
+  type: 'voice',
+  onSelect: (choice) => {
+    if (state.busy || state.voice === choice.id) return;
+    state.voice = choice.id;
+    state.toneGroup = 'all';
+    updateVoiceOptions();
+    persist();
+    clearResult();
+  }
+});
+
+function updateSpeedSlider() {
+  const slider = $('quick-speed-range');
+  slider.value = String(state.speed);
+  slider.style.setProperty('--speed-fill', `${((state.speed - 0.75) / 0.60) * 100}%`);
+  $('quick-speed-value').value = `${state.speed.toFixed(2)}×`;
+}
 function renderQuickControls() {
-  const modelSelect = $('quick-model-select');
-  const downloaded = availableModels(MODELS, state.installed);
-  modelSelect.replaceChildren();
-  if (!downloaded.length) {
-    const empty = new Option('Henüz indirilmiş model yok', '');
-    modelSelect.add(empty);
-    modelSelect.disabled = true;
-    $('quick-model-setup').hidden = false;
-  } else {
-    for (const model of downloaded) modelSelect.add(new Option(model.title, model.id));
-    modelSelect.value = state.modelId;
-    modelSelect.disabled = state.busy;
-    $('quick-model-setup').hidden = true;
-  }
-  $('quick-model-setup').disabled = state.busy;
+  const chosen = getModel(state.modelId);
+  const downloaded = state.installed;
+  modelPicker.setChoices(modelMenuChoices(MODELS, downloaded, state.modelId), state.modelId);
+  $('quick-model-value').textContent = chosen
+    ? `${chosen.title}${downloaded.has(chosen.id) ? '' : ' · Aktif edilmeli'}`
+    : 'Model seç';
+  $('quick-model-trigger').disabled = state.busy;
 
-  const voices = modelVoices(getModel(state.modelId), VOICE_STYLES);
-  const voiceWrap = $('quick-voice-control');
-  const voiceSelect = $('quick-voice-select');
-  voiceWrap.hidden = voices.length === 0;
-  voiceSelect.replaceChildren();
-  for (const voice of voices) {
-    voiceSelect.add(new Option(
-      `${voice.startsWith('F') ? 'Kadın' : 'Erkek'} ${voice.slice(1)} (${voice})`, voice
-    ));
-  }
-  if (voices.length) voiceSelect.value = state.voice;
-  voiceSelect.disabled = state.busy || !voices.length;
-
-  const speedSelect = $('quick-speed-select');
-  speedSelect.replaceChildren();
-  for (const value of SPEED_OPTIONS) speedSelect.add(new Option(`${Number(value).toFixed(2)}×`, value));
-  speedSelect.value = state.speed.toFixed(2);
-  speedSelect.disabled = state.busy;
+  const voices = modelVoices(chosen, VOICE_STYLES);
+  $('quick-voice-control').hidden = voices.length === 0;
+  voicePicker.setChoices(voices.map(voice => ({
+    id: voice,
+    label: `${voice.startsWith('F') ? 'Kadın' : 'Erkek'} ${voice.slice(1)} (${voice})`,
+    status: voice === state.voice ? 'Seçili' : '',
+    installed: true
+  })), state.voice);
+  $('quick-voice-value').textContent =
+    `${state.voice.startsWith('F') ? 'Kadın' : 'Erkek'} ${state.voice.slice(1)} (${state.voice})`;
+  $('quick-voice-trigger').disabled = state.busy || !voices.length;
+  $('quick-speed-range').disabled = state.busy;
+  updateSpeedSlider();
 }
 function renderModels() {
   const root = $('model-list');
@@ -187,6 +215,7 @@ function selectModel(id) {
 }
 function showPage(page) {
   const settings = page === 'settings';
+  closePickers();
   $('home-page').hidden = settings;
   $('settings-page').hidden = !settings;
   $('settings-link').setAttribute('aria-expanded', String(settings));
@@ -320,16 +349,7 @@ $('voice-select').addEventListener('change', event => {
   state.voice = event.target.value;
   persist(); clearResult(); renderQuickControls();
 });
-$('quick-model-select').addEventListener('change', event => selectModel(event.target.value));
-$('quick-model-setup').addEventListener('click', () => showPage('settings'));
-$('quick-voice-select').addEventListener('change', event => {
-  state.voice = event.target.value;
-  state.toneGroup = 'all';
-  updateVoiceOptions();
-  persist();
-  clearResult();
-});
-$('quick-speed-select').addEventListener('change', event => setSpeed(event.target.value));
+$('quick-speed-range').addEventListener('input', event => setSpeed(event.target.value));
 $('tone-select').addEventListener('change', event => {
   state.toneGroup = event.target.value; updateVoiceOptions(); persist(); clearResult();
 });
@@ -339,7 +359,7 @@ function setSpeed(value) {
   state.speed = Math.min(1.35, Math.max(0.75, Math.round(parsed * 20) / 20));
   $('speed-range').value = String(state.speed);
   $('speed-value').value = `${state.speed.toFixed(2)}×`;
-  $('quick-speed-select').value = state.speed.toFixed(2);
+  updateSpeedSlider();
   persist();
   clearResult();
 }
