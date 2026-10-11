@@ -301,9 +301,18 @@ async function initialize() {
   try {
     state.installed = new Set(await installedModelIds());
     renderModels();
-    navigator.storage.persist?.().catch(() => {});
+    if (typeof navigator.storage.persist === 'function') {
+      navigator.storage.persist().catch(() => {});
+    }
   } catch (error) {
     showError(`Model deposu okunamadı: ${error?.message || 'bilinmeyen hata'}`);
   }
 }
 initialize();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(error => {
+      console.warn('Çevrimdışı uygulama önbelleği etkinleştirilemedi:', error);
+    });
+  });
+}
