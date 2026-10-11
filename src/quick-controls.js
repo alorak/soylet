@@ -1,7 +1,4 @@
-/**
- * The homepage selector lists downloaded voices only; a never-downloaded default
- * is handled by the existing first-use install flow rather than a fake option.
- */
+/** The full menu shows all models; availableModels is used only for fallback. */
 export function availableModels(models, installedIds) {
   return models.filter(model => installedIds.has(model.id));
 }
@@ -15,4 +12,16 @@ export const SPEED_OPTIONS = Object.freeze(
 );
 export function modelVoices(model, styles) {
   return model?.engine === 'supertonic' ? [...styles] : [];
+}
+
+export function modelMenuChoices(models, installedIds, currentId) {
+  return models.map(model => {
+    const installed = installedIds.has(model.id);
+    return {
+      id: model.id,
+      label: model.title,
+      installed,
+      status: !installed ? 'Aktif edilmeli' : model.id === currentId ? 'Seçili' : 'İndirildi'
+    };
+  });
 }
