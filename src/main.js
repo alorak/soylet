@@ -111,7 +111,7 @@ function renderModels() {
     const installed = modelIsAvailable(model.id);
     const selected = model.id === state.modelId;
     const card = document.createElement('div');
-    card.className = `model-row${selected ? ' active' : ''}`;
+    card.className = `model-row${!installed ? ' not-installed' : selected ? ' active' : ''}`;
     const icon = document.createElement('span');
     icon.className = 'model-icon';
     icon.textContent = model.engine === 'piper' ? '♫' : '◉';
@@ -121,7 +121,7 @@ function renderModels() {
     title.append(document.createTextNode(model.title));
     const badge = document.createElement('span');
     badge.className = `model-badge${installed ? ' installed' : ''}`;
-    badge.textContent = selected && installed ? 'Aktif' : installed ? 'İndirildi' : 'İndirilmedi';
+    badge.textContent = installed && selected ? 'Varsayılan' : installed ? 'İndirildi' : 'İndirilmedi';
     title.append(badge);
     const description = document.createElement('p');
     description.textContent = `${model.summary} · ${model.size}`;
@@ -138,10 +138,10 @@ function renderModels() {
       actions.append(button);
     };
     if (installed) {
-      if (!selected) action('Seç', 'primary', () => selectModel(model.id));
+      if (!selected) action('Varsayılan seç', 'primary', () => selectModel(model.id));
       action('Sil', 'delete', () => deleteModel(model));
     } else {
-      action('↓ İndir', 'primary', () => installModel(model, true));
+      action('↓ İndir', 'download', () => installModel(model));
     }
     card.append(icon, info, actions);
     root.append(card);
@@ -209,8 +209,11 @@ async function installModel(model, chooseAfter = false) {
       showActivity(`${model.title} · ${filename}`, percent, true);
     }, controller.signal);
     state.installed.add(model.id);
-    if (chooseAfter) {
-      state.modelId = model.id;
+    const nextModel = chooseAfter
+      ? model.id
+      : chooseAvailableModel(state.modelId, MODELS, state.installed, DEFAULT_MODEL_ID);
+    if (nextModel !== state.modelId) {
+      state.modelId = nextModel;
       state.toneGroup = 'all';
       clearResult();
       updateVoiceOptions();
@@ -302,7 +305,6 @@ async function downloadSound(format) {
 }
 $('home-link').addEventListener('click', () => showPage('home'));
 $('settings-link').addEventListener('click', () => showPage($('settings-page').hidden ? 'settings' : 'home'));
-$('back-button').addEventListener('click', () => showPage('home'));
 textInput.addEventListener('input', () => {
   $('character-count').textContent = `${textInput.value.length} karakter`;
   clearResult(); clearError(); refreshBusy();
