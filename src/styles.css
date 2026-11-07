@@ -201,3 +201,8 @@ body{background:#f5f8fc;color:#192b42}
 .small-button.api-configure{background:#f0f6fc;border-color:#9dbbd4;color:#1d4e7d}
 .small-button.api-configure:hover:not(:disabled){background:#e2eef9}
 @media(max-width:630px){.tts-api-row{flex-direction:column}.tts-api-row button{align-self:flex-start}}
+
+/* P1 local runtime setup controls within the existing API settings panel. */
+.tts-api-local-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}
+.tts-api-guide-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.tts-api-guide-link:focus-visible{outline:2px solid #75a5d0;outline-offset:2px}
