@@ -65,14 +65,28 @@
         </section>
       </section>
       <section id="models-page" class="page settings-page" aria-label="Modeller" hidden>
-        <section class="settings-section"><div class="section-heading"><h2>Ses modelleri</h2><p>İndirilen modeller bu tarayıcıda saklanır.</p></div>
+        <section class="settings-section"><div class="section-heading"><h2>Ses modelleri</h2><p>Yerel modeller tarayıcıda saklanır; API modeli harici bir sunucuda çalışır.</p></div>
           <div id="model-list" class="model-list"></div>
           <p class="settings-footnote">Model dosyaları bu tarayıcının yerel alanında saklanır. Tarayıcı verileri temizlenirse silinir. Supertonic 3 ağırlıkları OpenRAIL-M lisanslıdır.</p>
+          <section id="tts-api-panel" class="tts-api-panel" aria-label="Turkish-TTS API ayarları" hidden>
+            <h3>Turkish-TTS · Sunucu bağlantısı</h3>
+            <p>Bu model tarayıcıya indirilmez. <strong>Seslendir</strong> düğmesine bastığınızda metin, belirlediğiniz GPU sunucusuna gönderilir. Yalnızca güvendiğiniz bir sunucuyu kullanın.</p>
+            <form id="tts-api-form">
+              <label for="tts-api-url">API temel adresi</label>
+              <div class="tts-api-row">
+                <input id="tts-api-url" type="url" placeholder="http://127.0.0.1:8000" autocomplete="url" spellcheck="false" required />
+                <button class="small-button primary" type="submit">Kaydet ve seç</button>
+              </div>
+            </form>
+            <button id="tts-api-check" class="small-button api-configure" type="button">Bağlantıyı kontrol et</button>
+            <p id="tts-api-status" role="status" aria-live="polite"></p>
+            <small>Uzak sunucular HTTPS gerektirir. Sunucu, CORS ile Söylet'in adresine izin vermelidir. API modelini kullanmak için sunucuda Turkish-TTS çalışıyor olmalıdır.</small>
+          </section>
         </section>
-        <section class="settings-section note-block"><strong>Gizlilik ve çevrimdışı kullanım</strong><p>ONNX çıkarımı cihazında çalışır. Bir API anahtarı veya backend gerekmez. İlk model indirmesi için internet gerekir.</p></section>
+        <section class="settings-section note-block"><strong>Gizlilik ve çevrimdışı kullanım</strong><p>Piper ve Supertonic cihazınızda çalışır; bu modeller için sunucu veya API anahtarı gerekmez. Turkish-TTS API seçilirse metin seçtiğiniz sunucuya gönderilir.</p></section>
       </section>
     </main>
-    <footer class="footer">söylet <span>·</span> Tarayıcında ses üret, özgürce dinle. <span>·</span> Metin ve ses hiçbir sunucuya gönderilmez; model dosyaları ilk kullanımda indirilir. <span>·</span> <a href="https://github.com/alorak/soylet" target="_blank" rel="noopener noreferrer" aria-label="söylet GitHub kaynak kodu">GitHub</a></footer>
+    <footer class="footer">söylet <span>·</span> Tarayıcında ses üret, özgürce dinle. <span>·</span> Piper ve Supertonic'te metin cihazınızda kalır; Turkish-TTS API seçilirse metin belirlediğiniz sunucuya gönderilir. <span>·</span> <a href="https://github.com/alorak/soylet" target="_blank" rel="noopener noreferrer" aria-label="söylet GitHub kaynak kodu">GitHub</a></footer>
   </div>
   <script type="module" src="/src/main.js"></script>
 </body>
