@@ -348,6 +348,14 @@ function removeApiConfig() {
   renderQuickControls();
   renderModels();
 }
+const LOCAL_TTS_URL = 'http://127.0.0.1:8000';
+// Local server installation requires an explicit user-run setup script; this only fills the URL.
+$('tts-api-local').addEventListener('click', () => {
+  if (state.busy) return;
+  $('tts-api-panel').hidden = false;
+  $('tts-api-url').value = LOCAL_TTS_URL;
+  $('tts-api-status').textContent = 'Yerel adres dolduruldu. Önce kurulum rehberindeki Docker servisini başlatın, ardından Bağlantıyı kontrol et ve Kaydet ve seç düğmelerini kullanın.';
+});
 $('tts-api-form').addEventListener('submit', event => {
   event.preventDefault();
   if (state.busy) return;

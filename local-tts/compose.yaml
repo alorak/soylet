@@ -1,0 +1,32 @@
+# Turkish-TTS runs on the user's own NVIDIA GPU. NEVER publish this service to the network.
+# The upstream source is pinned and fetched by manage.sh into ./upstream (gitignored).
+name: soylet-local-tts
+services:
+  tts:
+    build:
+      context: ./upstream
+      dockerfile: ../Dockerfile
+    image: soylet/turkish-tts-local:p1
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      HF_HOME: /cache/huggingface
+      TTS_HOST: "0.0.0.0"
+      TTS_PORT: "8000"
+      TTS_MODEL_MODEL_PATH: Trendyol/Trendyol-TTS
+      TTS_LOG_LEVEL: INFO
+      # Starlette CORSMiddleware compares the origin only: no /soylet path.
+      # Limit web origins to the official Söylet Pages origin and local Vite development.
+      TTS_API_CORS_ALLOWED_ORIGINS: '["https://alorak.github.io","http://127.0.0.1:5173","http://localhost:5173"]'
+    volumes:
+      - hf-cache:/cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+volumes:
+  hf-cache:

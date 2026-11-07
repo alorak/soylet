@@ -4,3 +4,5 @@ public/runtime/
 .DS_Store
 *.log
 .env*
+# P1 upstream checkout / local runtime artifacts
+local-tts/upstream/
