@@ -109,7 +109,7 @@ bash local-tts/manage.sh status
 | `/ready` → bağlantı reddedildi | Docker servisinin ayakta olduğunu, `127.0.0.1:8000` portunu ve logları kontrol edin |
 | Web arayüzünde `Failed to fetch` / CORS | `https://alorak.github.io` origin'i ve tarayıcı yerel ağ izni. Önce `curl` ile `/ready` testini yapın |
 | Port 8000 kullanılıyor | O servisi kapatın; portu değiştirirseniz Söylet URL'sini de değiştirin |
-| İndirilen model tekrar indiriliyor | Önceki Docker volume kullanılmıyor olabilir; `docker compose -f local-tts/compose.yaml volumes` veya Docker volume listesini kontrol edin |
+| İndirilen model tekrar indiriliyor | Önceki Docker volume kullanılmıyor olabilir; `docker compose -f local-tts/compose.yaml config --volumes` veya Docker volume listesini kontrol edin |
 | Ses çıkmıyor / 500 | GPU belleği, upstream istisna logları, bağımsız `curl /v1/tts` testi |
 
 ## 6. Lisans ve kaynak
