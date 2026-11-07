@@ -25,7 +25,7 @@ Piper/Supertonic için sunucu API'si, veritabanı veya API anahtarı gerekmez. G
 
 1. Metni yaz ve **Seslendir** düğmesine bas. İlk kullanımda varsayılan **Piper Fettah** modelini otomatik indirir (yaklaşık 63 MB).
 2. Ses oluştuğunda oynat, **WAV indir** veya **MP3 indir**.
-3. Ana sayfada özel **Model** menüsü bütün modelleri gösterir. İndirilenler seçilebilir; indirilmemiş modellerde **Aktif edilmeli** yazısı bulunur. Bu modele basıldığında Modeller sayfasındaki ilgili yeşil **İndir** düğmesine yönlendirilirsin. **Seslendir** ilk kullanımda varsayılan Piper modelini otomatik indirir.
+3. Ana sayfada özel **Model** menüsü bütün modelleri gösterir. İndirilen yerel modeller ve yapılandırılmış API modeli seçilebilir; indirilmemiş yerel modellerde **Aktif edilmeli**, yapılandırılmamış Turkish-TTS seçeneğinde **API ayarla** yazısı bulunur. Bu seçenekler Modeller sayfasındaki ilgili işleme yönlendirir. **Seslendir** ilk kullanımda varsayılan Piper modelini otomatik indirir.
 4. **Turkish-TTS GPU API** (isteğe bağlı): Modeller sayfasında **API ayarla** ile kendi sunucunuzun temel adresini girin (ör. `http://127.0.0.1:8000`), **Kaydet ve seç** deyin. İsterseniz önce **Bağlantıyı kontrol et** ile `GET /ready` durumunu doğrulayın. Bu model tarayıcıya indirilmez; yalnızca **Seslendir** tıklanınca yazdığınız metin sunucunuza `POST /v1/tts` ile gönderilir. WAV/MP3 indirme aynı şekilde çalışır. Diğer modeller yerel kalır.
 5. **Hız** ayarı sürüklenebilir 0,75×–1,35× çubuğudur. Supertonic 3 seçilirse ayrıca özel **Ses karakteri** menüsüyle F1–F5/M1–M5 seçebilirsin. Menüler klavyeyle de kullanılabilir. Piper'de ses karakteri gösterilmez.
 6. Sağ üstten **Modeller** sayfasına git. Henüz indirilmemiş modeller gri kartla ve yeşil **İndir** düğmesiyle gösterilir. İndirilen modellerdeki **Varsayılan seç** düğmesi, uygulamanın seçili ses modelini değiştirir; bu seçim tarayıcıda saklanır. Model indirmek artık mevcut varsayılan modeli kendiliğinden değiştirmez. Ses karakteri ve hız kontrolleri yalnızca ana sayfadadır. Üstteki tıklanabilir **söylet.** yazısı ana sayfaya götürür. Alt bilgide projenin [GitHub deposuna](https://github.com/alorak/soylet) bağlantı vardır.
@@ -44,7 +44,7 @@ Turkish-TTS entegrasyonu [Boran-Sert/Turkish-TTS](https://github.com/Boran-Sert/
 
 Piper modelleri `diffusionstudio/piper-voices` üzerinden, Supertonic 3 dosyaları ise `supertone-oss-archive/supertonic-3` model deposunun sabit bir revizyonundan tarayıcı tarafından indirilir. Modeller repoda, GitHub Pages paketinde veya kendi sunucumuzda yer almaz. İndirme dosyaları *Origin Private File System* (OPFS) içinde saklanır. İndirme iptal edilirse tamamlanmış dosyalar bir sonraki indirmede yeniden kullanılabilir.
 
-**Ses karakteri konusunda dürüst sınırlama:** Piper'in bu Türkçe modelleri tek seslidir. Çocuk sesi ya da bağımsız ince/kalın ton parametresi yoktur. Piper'de hız değişikliği basit örnekleme hızı dönüşümüyle uygulandığı için ses perdesi de etkilenebilir. Supertonic 3'te hız modelden kontrol edilir; cinsiyete göre hazır ses stili seçilebilir. Hazır ses stilleri otomatik olarak *çocuk sesi* sunmaz.
+**Ses karakteri konusunda dürüst sınırlama:** Piper'in bu Türkçe modelleri tek seslidir. Çocuk sesi ya da bağımsız ince/kalın ton parametresi yoktur. Piper ve Turkish-TTS API çıktısında hız değişikliği basit örnekleme hızı dönüşümüyle uygulandığı için ses perdesi de etkilenebilir. Supertonic 3'te hız modelden kontrol edilir; cinsiyete göre hazır ses stili seçilebilir. Hazır ses stilleri otomatik olarak *çocuk sesi* sunmaz.
 
 ## Çevrimdışı çalışma / gizlilik
 
