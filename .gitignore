@@ -6,3 +6,8 @@ public/runtime/
 .env*
 # P1 upstream checkout / local runtime artifacts
 local-tts/upstream/
+
+# P2 experimental model weights and local-generated manifest
+*.gguf
+*.safetensors
+p2-*-manifest.json
