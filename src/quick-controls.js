@@ -21,7 +21,9 @@ export function modelMenuChoices(models, installedIds, currentId) {
       id: model.id,
       label: model.title,
       installed,
-      status: !installed ? 'Aktif edilmeli' : model.id === currentId ? 'Seçili' : 'İndirildi'
+      status: !installed ? (model.engine === 'turkish-tts-api' ? 'API ayarla' : 'Aktif edilmeli')
+        : model.id === currentId ? 'Seçili'
+        : model.engine === 'turkish-tts-api' ? 'API tanımlı' : 'İndirildi'
     };
   });
 }
