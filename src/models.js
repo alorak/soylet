@@ -1,4 +1,4 @@
-// Models are fetched only when requested. No text or generated audio leaves the browser.
+// Local weights are fetched only on request. Optional API synthesis sends text to the user-selected server.
 export const DEFAULT_MODEL_ID = 'piper-fettah';
 const PIPER_BASE = 'https://huggingface.co/diffusionstudio/piper-voices/resolve/main';
 const SUPERTONIC_BASE = 'https://huggingface.co/supertone-oss-archive/supertonic-3/resolve/aafc6e32416a594460b32413efc49d7fe4ce6d46';
