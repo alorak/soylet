@@ -5,7 +5,7 @@ services:
   tts:
     build:
       context: ./upstream
-      dockerfile: docker/Dockerfile
+      dockerfile: ../Dockerfile
     image: soylet/turkish-tts-local:p1
     restart: unless-stopped
     ports:
