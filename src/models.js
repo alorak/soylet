@@ -29,6 +29,11 @@ export const MODELS = [
       })),
       ...VOICE_STYLES.map(style => ({ name: `${style}.json`, url: `${SUPERTONIC_BASE}/voice_styles/${style}.json` }))
     ]
+  },
+  {
+    id: 'turkish-tts-api', title: 'Turkish-TTS · GPU API', engine: 'turkish-tts-api',
+    summary: 'Türkçe · İsteğe bağlı GPU sunucusu · Metin sunucuya gönderilir',
+    size: 'API bağlantısı', files: []
   }
 ];
 export const getModel = id => MODELS.find(model => model.id === id);
@@ -38,6 +43,7 @@ export function storageSupported() {
     globalThis.isSecureContext;
 }
 async function getDir(model) {
+  if (model.engine === 'turkish-tts-api') throw new Error('API modeli tarayıcıya indirilmez.');
   if (!storageSupported()) throw new Error('Model depolamak için HTTPS veya localhost ve güncel bir tarayıcı gerekli.');
   const root = await navigator.storage.getDirectory();
   if (model.engine === 'piper') return root.getDirectoryHandle('piper', { create: true });
@@ -55,6 +61,7 @@ async function filePresent(model, name) {
   try { await getModelFile(model, name); return true; } catch { return false; }
 }
 export async function isInstalled(model) {
+  if (model.engine === 'turkish-tts-api') return false;
   if (!storageSupported()) return false;
   const statuses = await Promise.all(model.files.map(({ name }) => filePresent(model, name)));
   return statuses.every(Boolean);
@@ -119,6 +126,7 @@ async function downloadFile(dir, entry, index, count, report, signal) {
   }
 }
 export async function downloadModel(model, report, signal) {
+  if (model.engine === 'turkish-tts-api') throw new Error('API modeli için sunucu adresi yapılandırın.');
   const directory = await getDir(model);
   for (let i = 0; i < model.files.length; i++) {
     if (signal?.aborted) throw new DOMException('İndirme iptal edildi', 'AbortError');
