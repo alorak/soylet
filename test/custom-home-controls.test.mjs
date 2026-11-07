@@ -36,9 +36,9 @@ test('homepage speed remains an accessible range input', () => {
   assert.doesNotMatch(html, /quick-speed-select/);
 });
 
-test('privacy statement is on the same footer line rather than its own paragraph', () => {
+test('footer distinguishes on-device and optional server inference', () => {
   assert.doesNotMatch(html, /class="privacy-note"/);
-  assert.match(html, /Tarayıcında ses üret, özgürce dinle\..*Metin ve ses hiçbir sunucuya gönderilmez;/);
+  assert.match(html, /Piper ve Supertonic'te metin cihazınızda kalır; Turkish-TTS API seçilirse metin belirlediğiniz sunucuya gönderilir/);
   assert.match(css, /\.footer\{[\s\S]*?white-space:normal/);
   assert.match(html, /href="https:\/\/github\.com\/alorak\/soylet"/);
   assert.match(html, /rel="noopener noreferrer"/);

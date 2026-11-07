@@ -48,3 +48,9 @@ MIT, https://github.com/microsoft/onnxruntime
 @mintplex-labs/piper-tts-web: MIT, https://github.com/Mintplex-Labs/piper-tts-web
 
 @diffusionstudio/piper-wasm: MIT, https://github.com/diffusion-studio/piper-wasm
+## Turkish-TTS (opt-in HTTP API)
+
+API/server implementation: https://github.com/Boran-Sert/Turkish-TTS (Apache-2.0).
+Vendored VoxCPM2 code: Apache-2.0; Trendyol-TTS model weights: MIT as described by the upstream project.
+Söylet does not bundle or redistribute these weights or the Python server. The user supplies the endpoint of their own deployment.
+Review the upstream project model card and [LICENSE-NOTICE.md](https://github.com/Boran-Sert/Turkish-TTS/blob/main/LICENSE-NOTICE.md) for usage requirements and voice-cloning restrictions.

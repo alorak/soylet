@@ -1,3 +1,4 @@
+import { synthesizeWithTurkishTts } from './turkish-tts-api.js';
 import { getModelFile } from './models.js';
 
 const runtimeBase = `${import.meta.env.BASE_URL}runtime/`;
@@ -81,8 +82,12 @@ async function getStyle(engineInstance, model, voice) {
   }
 }
 
-export async function synthesize(model, text, { voice = 'F1', speed = 1 } = {}, update) {
+export async function synthesize(model, text, { voice = 'F1', speed = 1, apiUrl = '', signal } = {}, update) {
   if (!text.trim()) throw new Error('Lütfen seslendirmek istediğiniz metni yazın.');
+  if (model.engine === 'turkish-tts-api') {
+    update?.('Turkish-TTS sunucusunda Türkçe ses üretiliyor…');
+    return { blob: await synthesizeWithTurkishTts(text, apiUrl, { signal }), nativeSpeed: false };
+  }
   const instance = await ensureEngine(model, update);
   if (model.engine === 'piper') {
     update?.('Türkçe metin seslendiriliyor…');

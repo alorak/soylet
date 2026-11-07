@@ -16,6 +16,9 @@ test('models have distinct IDs and Turkish voices', () => {
   const large = getModel('supertonic-3');
   assert.equal(VOICE_STYLES.length, 10);
   assert.equal(large.files.length, 16);
+  const api = getModel('turkish-tts-api');
+  assert.equal(api.engine, 'turkish-tts-api');
+  assert.deepEqual(api.files, []);
 });
 test('writes valid 16-bit mono PCM WAV', async () => {
   const blob = makeWav({ samples: new Float32Array([0, -1, 1, 0.5]), sampleRate: 22050 });

@@ -51,4 +51,7 @@ test('model picker shows downloaded and not-yet-activated models together', () =
   assert.equal(choices.find(c => c.id === 'piper-fettah').status, 'İndirildi');
   assert.equal(choices.find(c => c.id === 'piper-dfki').status, 'Aktif edilmeli');
   assert.equal(choices.find(c => c.id === 'piper-dfki').installed, false);
+  assert.equal(choices.find(c => c.id === 'turkish-tts-api').status, 'API ayarla');
+  const configured = modelMenuChoices(MODELS, new Set(['turkish-tts-api']), 'turkish-tts-api');
+  assert.equal(configured.find(c => c.id === 'turkish-tts-api').status, 'Seçili');
 });

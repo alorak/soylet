@@ -186,3 +186,18 @@ body{background:#f5f8fc;color:#192b42}
 }
 .footer a:hover{text-decoration:underline}
 .footer a:focus-visible{outline:2px solid #8db7dc;outline-offset:3px;border-radius:2px}
+
+/* Turkish-TTS is an optional server connection, not an OPFS model download. */
+.tts-api-panel{margin-top:15px;padding:17px;border:1px solid #d4e3ef;border-radius:13px;background:#f5f9fd;color:#274663}
+.tts-api-panel[hidden]{display:none}
+.tts-api-panel h3{font-size:15px;color:#173d64;margin-bottom:7px}
+.tts-api-panel p{font-size:12px;line-height:1.55;margin-bottom:10px}
+.tts-api-panel label{display:block;font-weight:750;font-size:12px;margin-bottom:6px}
+.tts-api-row{display:flex;align-items:stretch;gap:9px;margin-bottom:9px}
+.tts-api-row input{flex:1 1 240px;min-width:0;border:1px solid #bbcfdf;border-radius:8px;padding:9px 11px;font:inherit;font-size:13px;color:#183958;background:white}
+.tts-api-row input:focus-visible{outline:2px solid #75a5d0;outline-offset:2px}
+.tts-api-panel small{display:block;color:#566d83;line-height:1.5;font-size:11px;margin-top:10px}
+.tts-api-panel #tts-api-status{margin:9px 0 0;font-weight:650}
+.small-button.api-configure{background:#f0f6fc;border-color:#9dbbd4;color:#1d4e7d}
+.small-button.api-configure:hover:not(:disabled){background:#e2eef9}
+@media(max-width:630px){.tts-api-row{flex-direction:column}.tts-api-row button{align-self:flex-start}}
