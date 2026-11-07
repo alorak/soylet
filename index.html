@@ -70,7 +70,7 @@
           <p class="settings-footnote">Model dosyaları bu tarayıcının yerel alanında saklanır. Tarayıcı verileri temizlenirse silinir. Supertonic 3 ağırlıkları OpenRAIL-M lisanslıdır.</p>
           <section id="tts-api-panel" class="tts-api-panel" aria-label="Turkish-TTS API ayarları" hidden>
             <h3>Turkish-TTS · Sunucu bağlantısı</h3>
-            <p>Bu model tarayıcıya indirilmez. <strong>Seslendir</strong> düğmesine bastığınızda metin, belirlediğiniz GPU sunucusuna gönderilir. Yalnızca güvendiğiniz bir sunucuyu kullanın.</p>
+            <p>Bu model tarayıcıya indirilmez. İsterseniz P1 yerel GPU kurulumuyla kendi bilgisayarınıza indirip çalıştırabilirsiniz. <strong>Seslendir</strong> düğmesine bastığınızda metin, belirlediğiniz GPU sunucusuna gönderilir. Yalnızca güvendiğiniz bir sunucuyu kullanın.</p>
             <form id="tts-api-form">
               <label for="tts-api-url">API temel adresi</label>
               <div class="tts-api-row">
@@ -78,9 +78,13 @@
                 <button class="small-button primary" type="submit">Kaydet ve seç</button>
               </div>
             </form>
+            <div class="tts-api-local-tools" aria-label="Yerel Turkish-TTS kurulumu">
+              <button id="tts-api-local" class="small-button api-configure" type="button">Bu bilgisayarı kullan</button>
+              <a class="small-button api-configure tts-api-guide-link" href="https://github.com/alorak/soylet/blob/main/docs/turkish-tts-local.md" target="_blank" rel="noopener noreferrer">Yerel GPU kurulum rehberi</a>
+            </div>
             <button id="tts-api-check" class="small-button api-configure" type="button">Bağlantıyı kontrol et</button>
             <p id="tts-api-status" role="status" aria-live="polite"></p>
-            <small>Uzak sunucular HTTPS gerektirir. Sunucu, CORS ile Söylet'in adresine izin vermelidir. API modelini kullanmak için sunucuda Turkish-TTS çalışıyor olmalıdır.</small>
+            <small>P1 kurulumu NVIDIA CUDA ve Docker gerektirir; macOS/CPU-only desteklenmez. Yerel servis yalnızca 127.0.0.1:8000 üzerinde dinler. Uzak sunucular HTTPS gerektirir. Sunucu, CORS ile Söylet'in adresine izin vermelidir.</small>
           </section>
         </section>
         <section class="settings-section note-block"><strong>Gizlilik ve çevrimdışı kullanım</strong><p>Piper ve Supertonic cihazınızda çalışır; bu modeller için sunucu veya API anahtarı gerekmez. Turkish-TTS API seçilirse metin seçtiğiniz sunucuya gönderilir.</p></section>
