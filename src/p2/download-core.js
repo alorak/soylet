@@ -61,15 +61,18 @@ async function fetchRange(url, offset, length, total, { fetchImpl, signal }) {
     throw new Error('P2 range request failed. Check network, Hugging Face CORS and permissions.');
   }
   if (response.status !== 206) {
+    await response.body?.cancel?.().catch(() => {});
     throw new Error(`P2 requires HTTP 206 Range support (received ${response.status}).`);
   }
   const range = /^bytes (\d+)-(\d+)\/(\d+)$/.exec(response.headers.get('content-range') || '');
   if (!range || Number(range[1]) !== offset || Number(range[2]) !== end ||
       Number(range[3]) !== total) {
+    await response.body?.cancel?.().catch(() => {});
     throw new Error('P2 server Content-Range does not match the pinned artifact.');
   }
   const declared = response.headers.get('content-length');
   if (declared !== null && Number(declared) !== length) {
+    await response.body?.cancel?.().catch(() => {});
     throw new Error('P2 server Content-Length mismatch.');
   }
   return readExactResponse(response, length, signal);
