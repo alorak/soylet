@@ -46,6 +46,12 @@ bash local-tts/manage.sh status
 
 **Ayrıntılı kılavuz:** [docs/turkish-tts-local.md](docs/turkish-tts-local.md) · **Mimari ve test matrisi:** [docs/turkish-tts-local-architecture.md](docs/turkish-tts-local-architecture.md). macOS ve CPU-only sistemler bu CUDA tabanlı P1 yolu için desteklenmiyor.
 
+## P2 — tarayıcı VoxCPM2 çalıştırma (deneysel)
+
+P2 geliştirme altyapısı, Trendyol-TTS'nin gelecekte tarayıcı içinde çalıştırılabilmesini araştırmak için **ayrı ve kapalı** tutulur. Yeni tarayıcı motoru **henüz kullanıcıya sunulmuyor**; çünkü VoxCPM2 GGUF dönüşümü, WASM çalışma zamanı, gerçek Türkçe ses kalitesi ve COOP/COEP gereksinimleri henüz doğrulanmış değil. Gereksiz büyük model indirmelerini engellemek için üretim uygulamasının model listesi değiştirilmedi.
+
+Altyapı: SHA-256 doğrulamalı parça-parça OPFS indirmesi, kesintiden sonra doğrulayarak sürdürme, pinned artifact manifest üretimi ve kapalı yayın kapısı. [P2 teknik durum, kanıt ve kabul ölçütleri](docs/turkish-tts-browser-p2.md).
+
 ## Modeller
 
 | Model | Motor | İndirme | Ses seçenekleri |
