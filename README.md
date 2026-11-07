@@ -30,6 +30,22 @@ Piper/Supertonic için sunucu API'si, veritabanı veya API anahtarı gerekmez. G
 5. **Hız** ayarı sürüklenebilir 0,75×–1,35× çubuğudur. Supertonic 3 seçilirse ayrıca özel **Ses karakteri** menüsüyle F1–F5/M1–M5 seçebilirsin. Menüler klavyeyle de kullanılabilir. Piper'de ses karakteri gösterilmez.
 6. Sağ üstten **Modeller** sayfasına git. Henüz indirilmemiş modeller gri kartla ve yeşil **İndir** düğmesiyle gösterilir. İndirilen modellerdeki **Varsayılan seç** düğmesi, uygulamanın seçili ses modelini değiştirir; bu seçim tarayıcıda saklanır. Model indirmek artık mevcut varsayılan modeli kendiliğinden değiştirmez. Ses karakteri ve hız kontrolleri yalnızca ana sayfadadır. Üstteki tıklanabilir **söylet.** yazısı ana sayfaya götürür. Alt bilgide projenin [GitHub deposuna](https://github.com/alorak/soylet) bağlantı vardır.
 
+## Turkish-TTS'yi kendi bilgisayarında çalıştırma (P1)
+
+Turkish-TTS için ayrı bir NVIDIA CUDA servisinin kurulması gerekir. Söylet'in tarayıcı arayüzü işletim sistemine otomatik program kurmaz ve model ağırlıklarını tarayıcıya indirmez. **P1**, Linux veya Windows WSL2 üzerinde Docker/NVIDIA ile çalışan, sadece `127.0.0.1:8000` portunu dinleyen **yerel GPU servisi** sağlar.
+
+**Kurulum (desteklenen GPU bilgisayarında):**
+
+```bash
+bash local-tts/manage.sh doctor
+bash local-tts/manage.sh setup
+bash local-tts/manage.sh status
+```
+
+İlk çalıştırmadan önce NVIDIA sürücü, Docker Compose v2, NVIDIA Container Toolkit (Linux) veya WSL2/Docker Desktop GPU desteği kurulmalıdır. `setup` upstream'in sabit bir commit'ini indirir, Docker imajını oluşturur ve yaklaşık 5 GB model ağırlığını Docker volume'a kaydeder. Söylet → **Modeller → Turkish-TTS → API ayarla → Bu bilgisayarı kullan → Bağlantıyı kontrol et** ile bağlanabilirsiniz. Yerel servisi kapatmak için `bash local-tts/manage.sh stop` komutunu kullanın; model cache'i korunur.
+
+**Ayrıntılı kılavuz:** [docs/turkish-tts-local.md](docs/turkish-tts-local.md) · **Mimari ve test matrisi:** [docs/turkish-tts-local-architecture.md](docs/turkish-tts-local-architecture.md). macOS ve CPU-only sistemler bu CUDA tabanlı P1 yolu için desteklenmiyor.
+
 ## Modeller
 
 | Model | Motor | İndirme | Ses seçenekleri |
@@ -49,7 +65,7 @@ Piper modelleri `diffusionstudio/piper-voices` üzerinden, Supertonic 3 dosyalar
 ## Çevrimdışı çalışma / gizlilik
 
 - **Piper ve Supertonic** sesleri yalnızca yerel JS/WebAssembly üzerinde hesaplanır.
-- **Turkish-TTS GPU API** seçilirse yalnızca kullanıcının belirlediği sunucuya sentezlenecek metin gönderilir. Yerel modeller bu yüzden değişmez. Turkish-TTS'nin çıktısı tarayıcıda WAV/MP3'e dönüştürülebilir; API seçiliyken çevrimdışı kullanım mümkün değildir.
+- **Turkish-TTS GPU API** seçilirse yalnızca kullanıcının belirlediği sunucuya sentezlenecek metin gönderilir. Yerel modeller bu yüzden değişmez. Turkish-TTS'nin çıktısı tarayıcıda WAV/MP3'e dönüştürülebilir. Uzak API internet gerektirir; kendi bilgisayarınızdaki P1 servisi ise model ve web uygulaması önbelleklendikten sonra bağlantısız kullanılabilir (tarayıcıya göre doğrulanmalıdır).
 - ONNX WASM ve Piper fonem dönüştürücü dosyaları, npm bağımlılıklarından `public/runtime/` altına kopyalanır; uygulama runtime sırasında CDN istemez.
 - Service worker aynı origin altındaki uygulama kabuğunu ve ilk kullanımda yüklenen JS/WASM dosyalarını önbelleğe alır. İlgili model indirildikten ve gerekli çalışma dosyaları ilk kez yüklendikten sonra çevrimdışı çalışabilir.
 - Model indirmek için Hugging Face erişimi, kalıcı depolama için HTTPS/localhost ve modern tarayıcı gerekir.
@@ -67,6 +83,8 @@ Kaynak kod: MIT. Supertonic tarayıcı çıkarım yardımcı kodu MIT lisansı k
 - `src/models.js` — Türkçe model kataloğu ve OPFS indirme/silme
 - `src/tts.js` — Piper/Supertonic tarayıcı çıkarımı ve isteğe bağlı Turkish-TTS adaptörü
 - `src/turkish-tts-api.js` — güvenli API adresi doğrulama, `/ready`, `/v1/tts` ve WAV yanıtı doğrulama
+- `local-tts/manage.sh`, `local-tts/compose.yaml`, `local-tts/Dockerfile` — P1 yerel NVIDIA servisinin kurulumu ve yönetimi
+- `docs/turkish-tts-local.md` — P1 kurulum ve sorun giderme kılavuzu
 - `src/audio.js` — WAV/MP3 dönüştürme
 - `src/vendor/supertonic-helper.js` — resmi MIT Supertonic tarayıcı helper'ı
 - `scripts/prepare-runtime.mjs` — yerel fonem dönüştürücü ve ONNX runtime WASM kopyalama
