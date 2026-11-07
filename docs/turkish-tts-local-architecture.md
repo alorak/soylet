@@ -25,7 +25,7 @@ Tarayıcı WAV/MP3 oynatıcı ve kaydetme (Söylet'in mevcut src/audio.js)
 
 - `local-tts/manage.sh` sabit bir **commit SHA** üzerinden upstream kaynağı klonlar; hareketli `main` ile otomatik güncellenmez.
 - `local-tts/upstream/` .gitignore ile dışlanır; upstream kodu veya ağırlıkları Söylet deposunda dağıtılmaz.
-- Docker image yerel olarak upstream'in `docker/Dockerfile` dosyasından oluşturulur.
+- Docker image, kopyalanan tüm upstream kaynakları ve lisans notlarıyla, Söylet'teki `local-tts/Dockerfile` üzerinden yerel olarak oluşturulur.
 - Model, HF önbellek volume'unda saklanır; `stop` veya konteyner yeniden oluşturma ağırlıkları silmez.
 - Upstream repo, modeller, Docker bağımlılıkları ve indirme kaynakları ayrı güven sınırlarıdır. Kaynağa ve modellere güvenmeden scripti çalıştırmayın.
 
