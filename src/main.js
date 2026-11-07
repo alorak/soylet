@@ -1,6 +1,7 @@
 import './styles.css';
 import { DEFAULT_MODEL_ID, MODELS, VOICE_STYLES, getModel, installedModelIds, downloadModel, removeModel, storageSupported } from './models.js';
 import { synthesize, forgetEngine } from './tts.js';
+import { normalizeTurkishTtsUrl, checkTurkishTtsReady } from './turkish-tts-api.js';
 import { decodeAudio, makeWav, makeMp3, saveFile } from './audio.js';
 import { chooseAvailableModel, modelVoices, modelMenuChoices } from './quick-controls.js';
 import { createPicker, closePickers } from './pickers.js';
@@ -15,6 +16,10 @@ const state = {
   modelId: getModel(saved.modelId) ? saved.modelId : DEFAULT_MODEL_ID,
   voice: VOICE_STYLES.includes(saved.voice) ? saved.voice : 'F1',
   speed: Number.isFinite(saved.speed) && saved.speed >= 0.75 && saved.speed <= 1.35 ? saved.speed : 1,
+  apiUrl: (() => {
+    try { return saved.apiUrl ? normalizeTurkishTtsUrl(saved.apiUrl) : ''; }
+    catch { return ''; }
+  })(),
   installed: new Set(),
   busy: false,
   controller: null,
@@ -26,7 +31,7 @@ const player = $('audio-player');
 
 function persist() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify({
-    modelId: state.modelId, voice: state.voice, speed: state.speed
+    modelId: state.modelId, voice: state.voice, speed: state.speed, apiUrl: state.apiUrl
   })); } catch {}
 }
 function clearResult() {
@@ -45,12 +50,13 @@ function showError(message) {
   $('error-box').hidden = false;
 }
 function clearError() { $('error-box').hidden = true; }
-function showActivity(message, percent = null, cancellable = false) {
+function showActivity(message, percent = null, cancellable = false, cancelLabel = 'İndirmeyi iptal et') {
   $('activity').hidden = false;
   $('activity-text').textContent = message;
   $('activity-percent').textContent = percent == null ? '' : `${Math.max(0, Math.min(100, percent))}%`;
   $('activity-bar').style.width = `${percent ?? 18}%`;
   $('cancel-download').hidden = !cancellable;
+  $('cancel-download').textContent = cancelLabel;
 }
 function hideActivity() { $('activity').hidden = true; $('cancel-download').hidden = true; }
 function refreshBusy() {
@@ -64,7 +70,14 @@ function refreshBusy() {
   renderModels();
 }
 function setBusy(busy) { state.busy = busy; refreshBusy(); }
-function modelIsAvailable(id) { return state.installed.has(id); }
+function modelIsAvailable(id) {
+  return id === 'turkish-tts-api' ? Boolean(state.apiUrl) : state.installed.has(id);
+}
+function activeModelIds() {
+  const ids = new Set(state.installed);
+  if (state.apiUrl) ids.add('turkish-tts-api');
+  return ids;
+}
 const modelPicker = createPicker({
   trigger: $('quick-model-trigger'),
   popover: $('quick-model-options'),
@@ -81,7 +94,7 @@ const modelPicker = createPicker({
     const index = MODELS.findIndex(model => model.id === choice.id);
     const card = $('model-list').children[index];
     card?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    card?.querySelector('.small-button.download')?.focus({ preventScroll: true });
+    card?.querySelector('.small-button.download, .small-button.api-configure')?.focus({ preventScroll: true });
   }
 });
 const voicePicker = createPicker({
@@ -106,10 +119,10 @@ function updateSpeedSlider() {
 }
 function renderQuickControls() {
   const chosen = getModel(state.modelId);
-  const downloaded = state.installed;
+  const downloaded = activeModelIds();
   modelPicker.setChoices(modelMenuChoices(MODELS, downloaded, state.modelId), state.modelId);
   $('quick-model-value').textContent = chosen
-    ? `${chosen.title}${downloaded.has(chosen.id) ? '' : ' · Aktif edilmeli'}`
+    ? `${chosen.title}${downloaded.has(chosen.id) ? '' : chosen.engine === 'turkish-tts-api' ? ' · API ayarla' : ' · Aktif edilmeli'}`
     : 'Model seç';
   $('quick-model-trigger').disabled = state.busy;
 
@@ -132,6 +145,7 @@ function renderModels() {
   root.replaceChildren();
   for (const model of MODELS) {
     const installed = modelIsAvailable(model.id);
+    const isApi = model.engine === 'turkish-tts-api';
     const selected = model.id === state.modelId;
     const card = document.createElement('div');
     card.className = `model-row${!installed ? ' not-installed' : selected ? ' active' : ''}`;
@@ -144,7 +158,7 @@ function renderModels() {
     title.append(document.createTextNode(model.title));
     const badge = document.createElement('span');
     badge.className = `model-badge${installed ? ' installed' : ''}`;
-    badge.textContent = installed && selected ? 'Varsayılan' : installed ? 'İndirildi' : 'İndirilmedi';
+    badge.textContent = installed && selected ? 'Varsayılan' : isApi ? (installed ? 'API tanımlı' : 'API ayarla') : installed ? 'İndirildi' : 'İndirilmedi';
     title.append(badge);
     const description = document.createElement('p');
     description.textContent = `${model.summary} · ${model.size}`;
@@ -162,7 +176,14 @@ function renderModels() {
     };
     if (installed) {
       if (!selected) action('Varsayılan seç', 'primary', () => selectModel(model.id));
-      action('Sil', 'delete', () => deleteModel(model));
+      if (isApi) {
+        action('API ayarları', 'api-configure', () => openApiConfig());
+        action('Bağlantıyı kaldır', 'delete', () => removeApiConfig());
+      } else {
+        action('Sil', 'delete', () => deleteModel(model));
+      }
+    } else if (isApi) {
+      action('API ayarla', 'api-configure', () => openApiConfig());
     } else {
       action('↓ İndir', 'download', () => installModel(model));
     }
@@ -210,7 +231,7 @@ async function installModel(model, chooseAfter = false) {
     state.installed.add(model.id);
     const nextModel = chooseAfter
       ? model.id
-      : chooseAvailableModel(state.modelId, MODELS, state.installed, DEFAULT_MODEL_ID);
+      : chooseAvailableModel(state.modelId, MODELS, activeModelIds(), DEFAULT_MODEL_ID);
     if (nextModel !== state.modelId) {
       state.modelId = nextModel;
         clearResult();
@@ -237,7 +258,7 @@ async function deleteModel(model) {
     await removeModel(model);
     state.installed.delete(model.id);
     if (state.modelId === model.id) {
-      state.modelId = chooseAvailableModel(state.modelId, MODELS, state.installed, DEFAULT_MODEL_ID);
+      state.modelId = chooseAvailableModel(state.modelId, MODELS, activeModelIds(), DEFAULT_MODEL_ID);
         updateVoiceOptions();
       persist();
     }
@@ -256,16 +277,21 @@ async function speak() {
   clearError();
   clearResult();
   const model = getModel(state.modelId);
+  const isApi = model.engine === 'turkish-tts-api';
   if (!modelIsAvailable(model.id)) {
+    if (isApi) { openApiConfig(); return; }
     await installModel(model, false);
     if (!modelIsAvailable(model.id)) return;
   }
+  const controller = isApi ? new AbortController() : null;
+  state.controller = controller;
   setBusy(true);
   try {
-    showActivity('Ses modeli hazırlanıyor…');
+    showActivity('Ses modeli hazırlanıyor…', null, isApi, 'Seslendirmeyi iptal et');
     const started = performance.now();
-    const result = await synthesize(model, text, { voice: state.voice, speed: state.speed },
-      msg => showActivity(msg));
+    const result = await synthesize(model, text, {
+      voice: state.voice, speed: state.speed, apiUrl: state.apiUrl, signal: controller?.signal
+    }, msg => showActivity(msg, null, isApi, 'Seslendirmeyi iptal et'));
     showActivity('Ses dosyası hazırlanıyor…');
     const audio = await decodeAudio(result.blob, result.nativeSpeed ? 1 : state.speed);
     const wav = makeWav(audio);
@@ -280,8 +306,9 @@ async function speak() {
     }
   } catch (error) {
     hideActivity();
-    showError(error?.message || 'Ses üretimi başarısız.');
+    showError(error?.name === 'AbortError' ? 'Seslendirme iptal edildi.' : error?.message || 'Ses üretimi başarısız.');
   } finally {
+    state.controller = null;
     setBusy(false);
   }
 }
@@ -300,6 +327,56 @@ async function downloadSound(format) {
     setBusy(false);
   }
 }
+function openApiConfig() {
+  if (state.busy) return;
+  showPage('models');
+  $('tts-api-panel').hidden = false;
+  $('tts-api-url').value = state.apiUrl || '';
+  $('tts-api-status').textContent = '';
+  $('tts-api-url').focus();
+}
+function removeApiConfig() {
+  if (state.busy || !state.apiUrl || !window.confirm('Turkish-TTS API bağlantısını kaldırmak istiyor musunuz?')) return;
+  state.apiUrl = '';
+  if (state.modelId === 'turkish-tts-api') {
+    state.modelId = chooseAvailableModel(state.modelId, MODELS, activeModelIds(), DEFAULT_MODEL_ID);
+  }
+  persist();
+  clearResult();
+  clearError();
+  $('tts-api-panel').hidden = true;
+  renderQuickControls();
+  renderModels();
+}
+$('tts-api-form').addEventListener('submit', event => {
+  event.preventDefault();
+  if (state.busy) return;
+  try {
+    state.apiUrl = normalizeTurkishTtsUrl($('tts-api-url').value);
+    persist();
+    selectModel('turkish-tts-api');
+    $('tts-api-status').textContent = 'API tanımlandı. Seslendir düğmesine basıldığında metin bu sunucuya gönderilir.';
+    renderQuickControls();
+    renderModels();
+  } catch (error) {
+    $('tts-api-status').textContent = error.message;
+  }
+});
+$('tts-api-check').addEventListener('click', async () => {
+  if (state.busy) return;
+  const status = $('tts-api-status');
+  status.textContent = 'Sunucunun hazır olma durumu kontrol ediliyor…';
+  $('tts-api-check').disabled = true;
+  try {
+    const ready = await checkTurkishTtsReady($('tts-api-url').value);
+    status.textContent = `Sunucu hazır · Model havuzu: ${ready.pool_size ?? 'bilinmiyor'}`;
+  } catch (error) {
+    status.textContent = error.message;
+  } finally {
+    $('tts-api-check').disabled = false;
+  }
+});
+
 $('home-link').addEventListener('click', () => showPage('home'));
 $('models-link').addEventListener('click', () => showPage($('models-page').hidden ? 'models' : 'home'));
 textInput.addEventListener('input', () => {
@@ -331,7 +408,7 @@ async function initialize() {
   }
   try {
     state.installed = new Set(await installedModelIds());
-    const current = chooseAvailableModel(state.modelId, MODELS, state.installed, DEFAULT_MODEL_ID);
+    const current = chooseAvailableModel(state.modelId, MODELS, activeModelIds(), DEFAULT_MODEL_ID);
     if (state.modelId !== current) {
       state.modelId = current;
         persist();
