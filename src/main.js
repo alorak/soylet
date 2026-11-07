@@ -88,8 +88,8 @@ const modelPicker = createPicker({
       selectModel(choice.id);
       return;
     }
-    // A model that is not downloaded stays unavailable until installed.
-    // Direct the user to the matching green download button on the Models page.
+    // Local weights require a download; the API model requires an explicit server configuration.
+    // Both use the corresponding action on the Models page.
     showPage('models');
     const index = MODELS.findIndex(model => model.id === choice.id);
     const card = $('model-list').children[index];
